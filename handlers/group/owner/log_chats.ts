@@ -16,8 +16,8 @@
  */
 
 import { getLogChat, setLogChat, unsetLogChat } from "$db";
-import { Context } from "$utils";
-import { Composer } from "grammy/mod.ts";
+import { Context } from "$utilities";
+import { Composer } from "grammy";
 
 const composer = new Composer<Context>();
 

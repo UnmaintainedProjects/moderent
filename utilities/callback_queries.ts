@@ -15,12 +15,18 @@
  * along with Moderent.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { SessionFlavor } from "grammy/mod.ts";
-import { ChatMemberAdministrator, ChatMemberOwner } from "grammy/types.ts";
-import { ParseModeContext } from "grammy_parse_mode";
+import { Context } from "grammy";
 
-export interface Session {
-  admins: Map<number, ChatMemberOwner | ChatMemberAdministrator>;
+export function getTarget({ msg }: Context) {
+  let target = 0;
+  if (msg) {
+    const entity = msg?.entities?.[0];
+    if (entity) {
+      target = Number(msg.text?.slice(
+        entity.offset,
+        entity.offset + entity.length,
+      ));
+    }
+  }
+  return target;
 }
-
-export type Context = ParseModeContext & SessionFlavor<Session>;

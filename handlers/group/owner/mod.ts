@@ -15,8 +15,8 @@
  * along with Moderent.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { Context } from "$utils";
-import { Composer } from "grammy/mod.ts";
+import { Context } from "$utilities";
+import { Composer } from "grammy";
 
 import log_chats from "./log_chats.ts";
 

@@ -15,10 +15,23 @@
  * along with Moderent.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-export * from "./input.ts";
-export * from "./types.ts";
-export * from "./errors.ts";
-export * from "./logger.ts";
-export * from "./handlers.ts";
-export * from "./middlewares.ts";
-export * from "./callback_queries.ts";
+import { Context } from "grammy";
+
+export async function revertAction(
+  ctx: Context,
+  reverter: () => Promise<unknown>,
+) {
+  const text = ctx.msg?.text;
+  const entities = ctx.msg?.entities;
+  if (!text || !entities) {
+    return;
+  }
+  await reverter();
+  await ctx.editMessageText(text + "\n\nAction reverted.", {
+    entities: [...entities, {
+      type: "strikethrough",
+      offset: 0,
+      length: text.length,
+    }],
+  });
+}

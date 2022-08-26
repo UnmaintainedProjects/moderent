@@ -17,8 +17,8 @@
 
 import group from "./group/mod.ts";
 
-import { Context } from "$utils";
-import { Composer } from "grammy/mod.ts";
+import { Context } from "$utilities";
+import { Composer } from "grammy";
 
 const composer = new Composer<Context>();
 

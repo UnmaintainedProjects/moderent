@@ -23,9 +23,9 @@ import {
   RestrictionParameters,
   revertAction,
   withRights,
-} from "$utils";
+} from "$utilities";
 
-import { Composer, InlineKeyboard } from "grammy/mod.ts";
+import { Composer, InlineKeyboard } from "grammy";
 import { Chat, User } from "grammy/types.ts";
 import { fmt, mentionUser } from "grammy_parse_mode";
 
