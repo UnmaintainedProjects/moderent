@@ -17,7 +17,6 @@
 
 export * from "./input.ts";
 export * from "./types.ts";
-export * from "./errors.ts";
 export * from "./logger.ts";
 export * from "./handlers.ts";
 export * from "./middleware.ts";
