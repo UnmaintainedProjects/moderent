@@ -15,13 +15,25 @@
  * along with Moderent.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import group from "./group/mod.ts";
-
+import moderation from "./moderation.ts";
+import logChat from "./log_chat.ts";
 import { Context } from "$utilities";
 import { Composer } from "grammy";
+import { Chat } from "grammy/types.ts";
 
 const composer = new Composer<Context>();
 
 export default composer;
 
-composer.use(group);
+const group = composer.filter((
+  ctx,
+): ctx is typeof ctx & { "chat": Chat.SupergroupChat | Chat.GroupChat } => {
+  return !!ctx.chat?.type.endsWith("group");
+});
+
+group.filter((ctx) => !!ctx.from && ctx.session.admins.has(ctx.from.id))
+  .use(moderation);
+
+composer.filter((ctx) =>
+  !!ctx.from && ctx.session.admins.get(ctx.from.id)?.status == "creator"
+).use(logChat);
