@@ -64,9 +64,6 @@ canRestrict.command("kick", async (ctx) => {
     fmt`Kicked ${
       mentionUser(params.user, params.user)
     }${params.readableUntilDate}.`,
-    {
-      parse_mode: "MarkdownV2",
-    },
   );
 });
 
