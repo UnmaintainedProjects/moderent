@@ -119,3 +119,102 @@ canRestrictAndDelete.command("dban", async (ctx) => {
     );
   }
 });
+
+function logKick(
+  params: RestrictionParameters,
+  ctx: Context & { chat: Chat; from: User },
+) {
+  log(
+    fmt`${mentionUser(ctx.from.first_name, ctx.from.id)} kicked ${
+      mentionUser(params.user, params.user)
+    } ${
+      params.reason
+        ? `for the following reason:\n${params.reason}`
+        : "for no reason."
+    }`,
+    ctx,
+  );
+}
+
+canRestrict.command("kick", async (ctx) => {
+  const params = getRestrictionParameters(ctx, true);
+  await ctx.banChatMember(params.user, { until_date: params.untilDate });
+  await new Promise((r) => setTimeout(r, 1000));
+  await ctx.unbanChatMember(params.user);
+  logKick(params, ctx);
+  await ctx.replyFmt(
+    fmt`Kicked ${
+      mentionUser(params.user, params.user)
+    }${params.readableUntilDate}.`,
+  );
+});
+
+canRestrictAndDelete.command("dkick", async (ctx) => {
+  const params = getRestrictionParameters(ctx, true);
+  await ctx.banChatMember(params.user, { until_date: params.untilDate });
+  await new Promise((r) => setTimeout(r, 1000));
+  await ctx.unbanChatMember(params.user);
+  logKick(params, ctx);
+  if (ctx.msg.reply_to_message) {
+    await ctx.api.deleteMessage(
+      ctx.chat.id,
+      ctx.msg.reply_to_message.message_id,
+    );
+  }
+});
+
+
+const mute = { can_send_messages: false };
+
+const unmute = {
+  can_send_polls: true,
+  can_change_info: true,
+  can_invite_users: true,
+  can_pin_messages: true,
+  can_send_messages: true,
+  can_send_media_messages: true,
+  can_send_other_messages: true,
+  can_add_web_page_previews: true,
+};
+
+canRestrict.command("mute", async (ctx) => {
+  const params = getRestrictionParameters(ctx);
+  await ctx.restrictChatMember(params.user, mute, {
+    until_date: params.untilDate,
+  });
+  await ctx.replyFmt(
+    fmt`Muted ${
+      mentionUser(params.user, params.user)
+    }${params.readableUntilDate}.`,
+    {
+      reply_markup: new InlineKeyboard().text("Undo", "unmute"),
+    },
+  );
+});
+
+canRestrict.command("unmute", async (ctx) => {
+  const params = getRestrictionParameters(ctx, true);
+  await ctx.restrictChatMember(params.user, unmute);
+  await ctx.replyFmt(`Unmuted ${mentionUser(params.user, params.user)}.`);
+});
+
+canRestrict.callbackQuery("unmute", async (ctx) => {
+  const target = getTarget(ctx);
+  if (target) {
+    await revertAction(ctx, () => ctx.restrictChatMember(target, unmute));
+  }
+});
+
+canRestrictAndDelete.command("dmute", async (ctx) => {
+  const params = getRestrictionParameters(ctx);
+  await ctx.restrictChatMember(params.user, mute, {
+    until_date: params.untilDate,
+  });
+  await ctx.deleteMessage();
+  if (ctx.msg.reply_to_message) {
+    await ctx.api.deleteMessage(
+      ctx.chat.id,
+      ctx.msg.reply_to_message.message_id,
+    );
+  }
+});
