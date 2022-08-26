@@ -15,7 +15,7 @@
  * along with Moderent.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { getLogChat, setLogChat, unsetLogChat } from "$db";
+import { getLogChat, setLogChat, unsetLogChat } from "$database";
 import { Context } from "$utilities";
 import { Composer } from "grammy";
 

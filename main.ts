@@ -20,7 +20,7 @@ import workers from "./workers/mod.ts";
 import handlers from "./handlers/mod.ts";
 import { client } from "./database/client.ts";
 
-import { initialize } from "$db";
+import { initialize } from "$database";
 import { Context, session } from "$utilities";
 
 import { Bot } from "grammy";

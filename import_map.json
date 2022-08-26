@@ -6,7 +6,7 @@
     "grammy/": "https://deno.land/x/grammy@v1.10.1/",
     "grammy_parse_mode": "https://deno.land/x/grammy_parse_mode@1.4.0/mod.ts",
     "mongo": "https://deno.land/x/mongo@v0.31.0/mod.ts",
-    "$db": "./database/ops/mod.ts",
+    "$database": "./database/operations/mod.ts",
     "$deps": "./deps.ts",
     "$utilities": "./utilities/mod.ts"
   }
