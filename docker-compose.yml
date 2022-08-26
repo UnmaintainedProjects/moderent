@@ -1,0 +1,9 @@
+services:
+  database:
+    image: mongo
+    restart: always
+  bot:
+    build: .
+    env_file: .env
+    restart: always
+    depends_on: [database]
