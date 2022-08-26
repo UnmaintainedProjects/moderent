@@ -24,13 +24,8 @@ const composer = new Composer<Context>();
 
 export default composer;
 
-composer.use((ctx, next) => {
-  if (ctx.from) {
-    const rights = ctx.session.admins.get(ctx.from.id);
-    if (rights?.status == "creator") {
-      return next();
-    }
-  }
-});
+const filter = composer.filter((ctx) =>
+  !!ctx.from && ctx.session.admins.get(ctx.from.id)?.status == "creator"
+);
 
-composer.use(log_chats);
+filter.use(log_chats);

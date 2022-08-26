@@ -27,13 +27,11 @@ const composer = new Composer<Context>();
 
 export default composer;
 
-composer.use(owner);
-
 const filter = composer.filter((
   ctx,
-): ctx is typeof ctx & { "chat": Chat.SupergroupChat | Chat.GroupChat } =>
-  !!ctx.chat?.type.endsWith("group")
-).errorBoundary(async ({ ctx, error }) => {
+): ctx is typeof ctx & { "chat": Chat.SupergroupChat | Chat.GroupChat } => {
+  return !!ctx.chat?.type.endsWith("group");
+}).errorBoundary(async ({ ctx, error }) => {
   if (error instanceof InputError) {
     await ctx.reply(error.message);
   } else if (error instanceof RightError) {
@@ -63,4 +61,5 @@ const filter = composer.filter((
   }
 });
 
+filter.use(owner);
 filter.use(admin);

@@ -54,7 +54,6 @@ export function withRights(
 
 export const withReply: Middleware<Context> = async (ctx, next) => {
   if (!ctx.message?.reply_to_message) {
-    console.log(ctx);
     throw new InputError("Reply a message.", "NO_RPLY");
   }
   await next();
