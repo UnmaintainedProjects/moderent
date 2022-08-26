@@ -15,7 +15,6 @@
  * along with Moderent.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { InputError } from "./errors.ts";
 import { Context } from "grammy";
 
 const timeExp = /^([1-9])+(h|d)$/;
@@ -65,9 +64,6 @@ export function getRestrictionParameters(
       }
     }
     params.reason = text;
-  }
-  if (!params.user) {
-    throw new InputError("No user provided.", "NO_USR");
   }
   return params;
 }

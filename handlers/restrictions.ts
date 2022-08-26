@@ -19,15 +19,13 @@ import {
   Context,
   getRestrictionParameters,
   getTarget,
-  InputError,
   log,
   RestrictionParameters,
   revertAction,
-  RightError,
   withRights,
 } from "$utilities";
 
-import { Composer, GrammyError, InlineKeyboard } from "grammy";
+import { Composer, InlineKeyboard } from "grammy";
 import { Chat, User } from "grammy/types.ts";
 import { fmt, mentionUser } from "grammy_parse_mode";
 
@@ -35,35 +33,7 @@ const composer = new Composer<Context>();
 
 export default composer;
 
-const withErrorBoundary = composer.errorBoundary(async ({ ctx, error }) => {
-  if (error instanceof InputError) {
-    await ctx.reply(error.message);
-  } else if (error instanceof RightError) {
-    if (ctx.callbackQuery) {
-      await ctx.answerCallbackQuery({
-        text: "You can't do this.",
-        show_alert: true,
-      });
-    } else {
-      await ctx.reply(
-        `You need the following right${
-          error.requiredRights.length == 1 ? "" : "s"
-        } to perform this action:\n` +
-          error.requiredRights.join(", "),
-      );
-    }
-  } else if (error instanceof GrammyError) {
-    if (![400].includes(error.error_code)) {
-      throw error;
-    }
-    const text = `A ${error.error_code} error occurred.`;
-    if (ctx.callbackQuery) {
-      await ctx.answerCallbackQuery({ text, show_alert: true });
-    } else {
-      await ctx.reply(text);
-    }
-  }
-});
+const withErrorBoundary = composer;
 
 const message = withErrorBoundary.on(["message", "callback_query"]);
 
@@ -90,6 +60,10 @@ function logBan(
 
 canRestrict.command("ban", async (ctx) => {
   const params = getRestrictionParameters(ctx);
+  if (!params.user) {
+    await ctx.reply("Target not specified.");
+    return;
+  }
   await ctx.banChatMember(params.user, { until_date: params.untilDate });
   logBan(params, ctx);
   await ctx.replyFmt(
@@ -125,6 +99,10 @@ function logUnban(
 
 canRestrict.command("unban", async (ctx) => {
   const params = getRestrictionParameters(ctx, true);
+  if (!params.user) {
+    await ctx.reply("Target not specified.");
+    return;
+  }
   await ctx.unbanChatMember(params.user);
   logUnban(params, ctx);
   await ctx.replyFmt(fmt`Unbanned ${mentionUser(params.user, params.user)}.`);
@@ -141,6 +119,10 @@ canRestrict.filter((ctx): ctx is typeof ctx & { chat: Chat } => !!ctx.chat)
 
 canRestrictAndDelete.command("dban", async (ctx) => {
   const params = getRestrictionParameters(ctx);
+  if (!params.user) {
+    await ctx.reply("Target not specified.");
+    return;
+  }
   await ctx.banChatMember(params.user, { until_date: params.untilDate });
   logBan(params, ctx);
   await ctx.deleteMessage();
@@ -170,6 +152,10 @@ function logKick(
 
 canRestrict.command("kick", async (ctx) => {
   const params = getRestrictionParameters(ctx, true);
+  if (!params.user) {
+    await ctx.reply("Target not specified.");
+    return;
+  }
   await ctx.banChatMember(params.user, { until_date: params.untilDate });
   await new Promise((r) => setTimeout(r, 1000));
   await ctx.unbanChatMember(params.user);
@@ -183,6 +169,10 @@ canRestrict.command("kick", async (ctx) => {
 
 canRestrictAndDelete.command("dkick", async (ctx) => {
   const params = getRestrictionParameters(ctx, true);
+  if (!params.user) {
+    await ctx.reply("Target not specified.");
+    return;
+  }
   await ctx.banChatMember(params.user, { until_date: params.untilDate });
   await new Promise((r) => setTimeout(r, 1000));
   await ctx.unbanChatMember(params.user);
@@ -210,6 +200,10 @@ const unmute = {
 
 canRestrict.command("mute", async (ctx) => {
   const params = getRestrictionParameters(ctx);
+  if (!params.user) {
+    await ctx.reply("Target not specified.");
+    return;
+  }
   await ctx.restrictChatMember(params.user, mute, {
     until_date: params.untilDate,
   });
@@ -225,6 +219,10 @@ canRestrict.command("mute", async (ctx) => {
 
 canRestrict.command("unmute", async (ctx) => {
   const params = getRestrictionParameters(ctx, true);
+  if (!params.user) {
+    await ctx.reply("Target not specified.");
+    return;
+  }
   await ctx.restrictChatMember(params.user, unmute);
   await ctx.replyFmt(`Unmuted ${mentionUser(params.user, params.user)}.`);
 });
@@ -238,6 +236,10 @@ canRestrict.callbackQuery("unmute", async (ctx) => {
 
 canRestrictAndDelete.command("dmute", async (ctx) => {
   const params = getRestrictionParameters(ctx);
+  if (!params.user) {
+    await ctx.reply("Target not specified.");
+    return;
+  }
   await ctx.restrictChatMember(params.user, mute, {
     until_date: params.untilDate,
   });
