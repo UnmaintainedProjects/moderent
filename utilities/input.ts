@@ -16,7 +16,7 @@
  */
 
 import { InputError } from "./errors.ts";
-import { Context } from "grammy/mod.ts";
+import { Context } from "grammy";
 
 const timeExp = /^([1-9])+(h|d)$/;
 

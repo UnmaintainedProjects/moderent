@@ -21,9 +21,9 @@ import {
   getTarget,
   revertAction,
   withRights,
-} from "$utils";
+} from "$utilities";
 
-import { Composer, InlineKeyboard } from "grammy/mod.ts";
+import { Composer, InlineKeyboard } from "grammy";
 import { fmt, mentionUser } from "grammy_parse_mode";
 
 const composer = new Composer<Context>();
@@ -60,7 +60,6 @@ canRestrict.command("mute", async (ctx) => {
       mentionUser(params.user, params.user)
     }${params.readableUntilDate}.`,
     {
-      parse_mode: "MarkdownV2",
       reply_markup: new InlineKeyboard().text("Undo", "unmute"),
     },
   );
@@ -69,12 +68,7 @@ canRestrict.command("mute", async (ctx) => {
 canRestrict.command("unmute", async (ctx) => {
   const params = getRestrictionParameters(ctx, true);
   await ctx.restrictChatMember(params.user, unmute);
-  await ctx.replyFmt(
-    `Unmuted ${mentionUser(params.user, params.user)}.`,
-    {
-      parse_mode: "MarkdownV2",
-    },
-  );
+  await ctx.replyFmt(`Unmuted ${mentionUser(params.user, params.user)}.`);
 });
 
 canRestrict.callbackQuery("unmute", async (ctx) => {

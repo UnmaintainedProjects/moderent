@@ -20,10 +20,10 @@ import workers from "./workers/mod.ts";
 import handlers from "./handlers/mod.ts";
 import { client } from "./database/client.ts";
 
-import { initialize } from "$db";
-import { Context, session } from "$utils";
+import { initialize } from "$database";
+import { Context, session } from "$utilities";
 
-import { Bot } from "grammy/mod.ts";
+import { Bot } from "grammy";
 import { hydrateReply } from "grammy_parse_mode";
 
 const bot = new Bot<Context>(env.BOT_TOKEN);

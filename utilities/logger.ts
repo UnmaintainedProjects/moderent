@@ -16,7 +16,7 @@
  */
 
 import { Context } from "./types.ts";
-import { getLogChat } from "$db";
+import { getLogChat } from "$database";
 
 import { Chat } from "grammy/types.ts";
 import { FormattedString } from "grammy_parse_mode";

@@ -15,8 +15,8 @@
  * along with Moderent.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { Composer } from "grammy/mod.ts";
-import { Context } from "$utils";
+import { Composer } from "grammy";
+import { Context } from "$utilities";
 
 import ban from "./ban.ts";
 import mute from "./mute.ts";

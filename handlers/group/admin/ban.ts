@@ -23,9 +23,9 @@ import {
   RestrictionParameters,
   revertAction,
   withRights,
-} from "$utils";
+} from "$utilities";
 
-import { Composer, InlineKeyboard } from "grammy/mod.ts";
+import { Composer, InlineKeyboard } from "grammy";
 import { Chat, User } from "grammy/types.ts";
 import { fmt, mentionUser } from "grammy_parse_mode";
 
@@ -95,9 +95,7 @@ canRestrict.command("unban", async (ctx) => {
   const params = getRestrictionParameters(ctx, true);
   await ctx.unbanChatMember(params.user);
   logUnban(params, ctx);
-  await ctx.replyFmt(fmt`Unbanned ${mentionUser(params.user, params.user)}.`, {
-    parse_mode: "MarkdownV2",
-  });
+  await ctx.replyFmt(fmt`Unbanned ${mentionUser(params.user, params.user)}.`);
 });
 
 canRestrict.filter((ctx): ctx is typeof ctx & { chat: Chat } => !!ctx.chat)

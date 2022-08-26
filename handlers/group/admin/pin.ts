@@ -15,8 +15,8 @@
  * along with Moderent.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { Context, withReply, withRights } from "$utils";
-import { Composer } from "grammy/mod.ts";
+import { Context, withReply, withRights } from "$utilities";
+import { Composer } from "grammy";
 
 const composer = new Composer<Context>();
 
