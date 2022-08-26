@@ -22,6 +22,5 @@ await config({ export: true });
 
 export default cleanEnv(Deno.env.toObject(), {
   BOT_TOKEN: str(),
-  MONGO_URI: str(),
-  MONGO_DB: str({ default: "wbb" }),
+  MONGODB_URI: str(),
 });

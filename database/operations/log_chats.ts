@@ -16,17 +16,19 @@
  */
 
 import { database } from "../database.ts";
+import { Collection } from "mongo";
 
 export interface LogChat {
   chatId: number;
   logChatId: number;
 }
 
-const collection = () => database().collection<LogChat>("log_chats");
+let collection: Collection<LogChat>;
 const cache = new Map<number, number | null>();
 
 export function initializeLogChats() {
-  collection().createIndexes({
+  collection = database.collection<LogChat>("log_chats");
+  collection.createIndexes({
     indexes: [
       {
         key: { "chatId": 1 },
@@ -43,14 +45,14 @@ export function initializeLogChats() {
 }
 
 export async function setLogChat(chatId: number, logChatId: number) {
-  await collection().updateOne({ chatId }, { $set: { logChatId } }, {
+  await collection.updateOne({ chatId }, { $set: { logChatId } }, {
     upsert: true,
   });
   cache.set(chatId, logChatId);
 }
 
 export async function unsetLogChat(chatId: number) {
-  const result = await collection().deleteOne({ chatId });
+  const result = await collection.deleteOne({ chatId });
   cache.set(chatId, null);
   return result;
 }
@@ -58,7 +60,7 @@ export async function unsetLogChat(chatId: number) {
 export async function getLogChat(chatId: number) {
   let logChatId = cache.get(chatId);
   if (!logChatId) {
-    const logChat = await collection().findOne({ chatId });
+    const logChat = await collection.findOne({ chatId });
     if (logChat) {
       logChatId = logChat.logChatId;
     } else {
