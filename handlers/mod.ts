@@ -15,8 +15,9 @@
  * along with Moderent.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import moderation from "./moderation.ts";
+import restrictions from "./restrictions.ts";
 import logChat from "./log_chat.ts";
+import messages from "./messages.ts";
 import { Context } from "$utilities";
 import { Composer } from "grammy";
 import { Chat } from "grammy/types.ts";
@@ -31,8 +32,12 @@ const group = composer.filter((
   return !!ctx.chat?.type.endsWith("group");
 });
 
-group.filter((ctx) => !!ctx.from && ctx.session.admins.has(ctx.from.id))
-  .use(moderation);
+const admin = group.filter((ctx) =>
+  !!ctx.from && ctx.session.admins.has(ctx.from.id)
+);
+
+admin.use(restrictions);
+admin.use(messages);
 
 composer.filter((ctx) =>
   !!ctx.from && ctx.session.admins.get(ctx.from.id)?.status == "creator"
