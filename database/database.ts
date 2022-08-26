@@ -15,7 +15,8 @@
  * along with Moderent.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { client } from "./client.ts";
-import env from "../env.ts";
+import { Database } from "mongo";
 
-export const database = () => client.database(env.MONGO_DB);
+export let database: Database;
+
+export const setDatabase = (database_: Database) => (database = database_);
