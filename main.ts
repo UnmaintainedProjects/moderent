@@ -16,13 +16,10 @@
  */
 
 import env from "./env.ts";
+import { connect } from "./database/mod.ts";
 import workers from "./workers/mod.ts";
 import handlers from "./handlers/mod.ts";
-import { client } from "./database/client.ts";
-
-import { initialize } from "$database";
-import { Context, session } from "$utilities";
-
+import { Context, session } from "./utilities/mod.ts";
 import { Bot } from "grammy";
 import { hydrateReply } from "grammy_parse_mode";
 
@@ -33,8 +30,8 @@ bot.use(session);
 bot.use(workers);
 bot.use(handlers);
 
-await client.connect(env.MONGO_URI);
-await initialize();
+await connect();
+
 bot.start({
   drop_pending_updates: true,
   allowed_updates: ["message", "callback_query", "chat_member"],

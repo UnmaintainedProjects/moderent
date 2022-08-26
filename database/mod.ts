@@ -16,5 +16,15 @@
  */
 
 import { MongoClient } from "mongo";
+import env, {} from "../env.ts";
+import { initialize } from "./operations/mod.ts";
+import { setDatabase } from "./database.ts";
 
-export const client = new MongoClient();
+const client = new MongoClient();
+
+export * from "./operations/mod.ts";
+
+export async function connect() {
+  setDatabase(await client.connect(env.MONGODB_URI));
+  await initialize();
+}
