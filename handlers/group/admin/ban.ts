@@ -95,9 +95,7 @@ canRestrict.command("unban", async (ctx) => {
   const params = getRestrictionParameters(ctx, true);
   await ctx.unbanChatMember(params.user);
   logUnban(params, ctx);
-  await ctx.replyFmt(fmt`Unbanned ${mentionUser(params.user, params.user)}.`, {
-    parse_mode: "MarkdownV2",
-  });
+  await ctx.replyFmt(fmt`Unbanned ${mentionUser(params.user, params.user)}.`);
 });
 
 canRestrict.filter((ctx): ctx is typeof ctx & { chat: Chat } => !!ctx.chat)
