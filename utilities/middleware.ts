@@ -15,9 +15,7 @@
  * along with Moderent.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { InputError, RightError } from "./errors.ts";
 import { Context, Session } from "./types.ts";
-
 import { Middleware, session as session_ } from "grammy";
 import { ChatAdministratorRights } from "grammy/types.ts";
 
@@ -32,7 +30,7 @@ export function withRights(
     | keyof ChatAdministratorRights
     | (keyof ChatAdministratorRights)[],
 ): Middleware<Context & { from: NonNullable<Context["from"]> }> {
-  return (ctx, next) => {
+  return async (ctx, next) => {
     const rights = ctx.session.admins.get(ctx.from.id);
     requiredRights = Array.isArray(requiredRights)
       ? requiredRights
@@ -48,13 +46,19 @@ export function withRights(
         return next();
       }
     }
-    throw new RightError(requiredRights);
+    const text = "Permission denied.";
+    if (ctx.message) {
+      await ctx.reply(text);
+    } else if (ctx.callbackQuery) {
+      await ctx.answerCallbackQuery({ text, show_alert: true });
+    }
   };
 }
 
 export const withReply: Middleware<Context> = async (ctx, next) => {
   if (!ctx.message?.reply_to_message) {
-    throw new InputError("Reply a message.", "NO_RPLY");
+    await ctx.reply("Reply a message.");
+  } else {
+    await next();
   }
-  await next();
 };
