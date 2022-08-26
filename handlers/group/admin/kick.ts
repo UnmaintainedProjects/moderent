@@ -21,9 +21,9 @@ import {
   log,
   RestrictionParameters,
   withRights,
-} from "$utils";
+} from "$utilities";
 
-import { Composer } from "grammy/mod.ts";
+import { Composer } from "grammy";
 import { Chat, User } from "grammy/types.ts";
 import { fmt, mentionUser } from "grammy_parse_mode";
 

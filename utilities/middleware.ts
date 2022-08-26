@@ -18,7 +18,7 @@
 import { InputError, RightError } from "./errors.ts";
 import { Context, Session } from "./types.ts";
 
-import { Middleware, session as session_ } from "grammy/mod.ts";
+import { Middleware, session as session_ } from "grammy";
 import { ChatAdministratorRights } from "grammy/types.ts";
 
 export const session = session_({

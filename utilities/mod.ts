@@ -15,18 +15,10 @@
  * along with Moderent.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { Context } from "grammy/mod.ts";
-
-export function getTarget({ msg }: Context) {
-  let target = 0;
-  if (msg) {
-    const entity = msg?.entities?.[0];
-    if (entity) {
-      target = Number(msg.text?.slice(
-        entity.offset,
-        entity.offset + entity.length,
-      ));
-    }
-  }
-  return target;
-}
+export * from "./input.ts";
+export * from "./types.ts";
+export * from "./errors.ts";
+export * from "./logger.ts";
+export * from "./handlers.ts";
+export * from "./middleware.ts";
+export * from "./callback_queries.ts";

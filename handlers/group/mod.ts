@@ -18,9 +18,9 @@
 import admin from "./admin/mod.ts";
 import owner from "./owner/mod.ts";
 
-import { Context, InputError, RightError } from "$utils";
+import { Context, InputError, RightError } from "$utilities";
 
-import { Composer, GrammyError } from "grammy/mod.ts";
+import { Composer, GrammyError } from "grammy";
 import { Chat } from "grammy/types.ts";
 
 const composer = new Composer<Context>();

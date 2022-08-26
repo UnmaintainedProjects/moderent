@@ -15,23 +15,12 @@
  * along with Moderent.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { Context } from "grammy/mod.ts";
+import { SessionFlavor } from "grammy";
+import { ChatMemberAdministrator, ChatMemberOwner } from "grammy/types.ts";
+import { ParseModeContext } from "grammy_parse_mode";
 
-export async function revertAction(
-  ctx: Context,
-  reverter: () => Promise<unknown>,
-) {
-  const text = ctx.msg?.text;
-  const entities = ctx.msg?.entities;
-  if (!text || !entities) {
-    return;
-  }
-  await reverter();
-  await ctx.editMessageText(text + "\n\nAction reverted.", {
-    entities: [...entities, {
-      type: "strikethrough",
-      offset: 0,
-      length: text.length,
-    }],
-  });
+export interface Session {
+  admins: Map<number, ChatMemberOwner | ChatMemberAdministrator>;
 }
+
+export type Context = ParseModeContext & SessionFlavor<Session>;
