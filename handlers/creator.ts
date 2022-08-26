@@ -15,9 +15,9 @@
  * along with Moderent.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { getLogChat, setLogChat, unsetLogChat } from "$db";
-import { Context } from "$utils";
-import { Composer } from "grammy/mod.ts";
+import { getLogChat, setLogChat, unsetLogChat } from "$database";
+import { Context } from "$utilities";
+import { Composer } from "grammy";
 
 const composer = new Composer<Context>();
 

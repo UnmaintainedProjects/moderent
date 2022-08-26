@@ -17,10 +17,10 @@
 
 import { Composer, GrammyError } from "grammy/mod.ts";
 import { Chat } from "grammy/types.ts";
-import { Context, InputError, RightError } from "$utils";
+import { Context, InputError, RightError } from "$utilities";
 
-import restriction from "./restriction.ts";
-import creator from "./creator.ts";
+import { Context } from "$utilities";
+import { Composer } from "grammy/mod.ts";
 
 const composer = new Composer<Context>();
 
