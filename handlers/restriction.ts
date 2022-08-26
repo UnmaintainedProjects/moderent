@@ -163,7 +163,6 @@ canRestrictAndDelete.command("dkick", async (ctx) => {
   }
 });
 
-
 const mute = { can_send_messages: false };
 
 const unmute = {
