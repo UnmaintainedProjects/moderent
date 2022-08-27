@@ -30,6 +30,12 @@ composer.command("setlogchat", async (ctx) => {
     return;
   }
   try {
+    try {
+      const member = await ctx.api.getChatMember(ctx.chat.id, ctx.me.id);
+    } catch (err) {
+      console.log(err);
+      return;
+    }
     await setLogChat(ctx.chat.id, logChatId);
     await ctx.reply(`Set the log chat to ${logChatId}.`);
   } catch (err) {
@@ -40,7 +46,7 @@ composer.command("setlogchat", async (ctx) => {
 composer.command("logchat", async (ctx) => {
   const logChatId = await getLogChat(ctx.chat.id);
   await ctx.reply(
-    logChatId == null ? "No log chat is set." : `The log chat is ${logChatId}.`,
+    logChatId ? "No log chat is set." : `The log chat is ${logChatId}.`,
   );
 });
 

@@ -37,8 +37,8 @@ const withErrorBoundary = composer;
 
 const message = withErrorBoundary.on(["message", "callback_query"]);
 
-const canRestrict = message.use(withRights("can_restrict_members"));
-const canRestrictAndDelete = message.use(
+const canRestrict = message.filter(withRights("can_restrict_members"));
+const canRestrictAndDelete = message.filter(
   withRights(["can_restrict_members", "can_delete_messages"]),
 );
 

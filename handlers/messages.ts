@@ -22,7 +22,7 @@ const composer = new Composer<Context>();
 
 export default composer;
 
-const message = composer.on("::bot_command").use(withReply)
+const message = composer.on("::bot_command").filter(withReply)
   .filter(
     (
       ctx,
@@ -37,7 +37,7 @@ const message = composer.on("::bot_command").use(withReply)
     },
   );
 
-const canPin = message.use(withRights("can_pin_messages"));
+const canPin = message.filter(withRights("can_pin_messages"));
 
 canPin.command("pin", async (ctx) => {
   await ctx.pinChatMessage(ctx.message.reply_to_message.message_id);
