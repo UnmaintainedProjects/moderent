@@ -30,12 +30,6 @@ composer.command("setlogchat", async (ctx) => {
     return;
   }
   try {
-    try {
-      const member = await ctx.api.getChatMember(ctx.chat.id, ctx.me.id);
-    } catch (err) {
-      console.log(err);
-      return;
-    }
     await setLogChat(ctx.chat.id, logChatId);
     await ctx.reply(`Set the log chat to ${logChatId}.`);
   } catch (err) {
