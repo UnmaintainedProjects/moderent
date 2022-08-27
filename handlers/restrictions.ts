@@ -18,14 +18,12 @@
 import {
   Context,
   getRestrictionParameters,
-  getTarget,
   log,
   RestrictionParameters,
-  revertAction,
   withRights,
 } from "$utilities";
 
-import { Composer, InlineKeyboard } from "grammy";
+import { Composer } from "grammy";
 import { Chat, User } from "grammy/types.ts";
 import { fmt, mentionUser } from "grammy_parse_mode";
 
@@ -35,7 +33,7 @@ export default composer;
 
 const withErrorBoundary = composer;
 
-const message = withErrorBoundary.on(["message", "callback_query"]);
+const message = withErrorBoundary.on("message");
 
 const canRestrict = message.filter(withRights("can_restrict_members"));
 const canRestrictAndDelete = message.filter(
@@ -70,9 +68,6 @@ canRestrict.command("ban", async (ctx) => {
     fmt`Banned ${
       mentionUser(params.user, params.user)
     }${params.readableUntilDate}.`,
-    {
-      reply_markup: new InlineKeyboard().text("Undo", "unban"),
-    },
   );
 });
 
@@ -107,15 +102,6 @@ canRestrict.command("unban", async (ctx) => {
   logUnban(params, ctx);
   await ctx.replyFmt(fmt`Unbanned ${mentionUser(params.user, params.user)}.`);
 });
-
-canRestrict.filter((ctx): ctx is typeof ctx & { chat: Chat } => !!ctx.chat)
-  .callbackQuery("unban", async (ctx) => {
-    const target = getTarget(ctx);
-    if (target) {
-      await revertAction(ctx, () => ctx.unbanChatMember(target));
-      logUnban(target, ctx);
-    }
-  });
 
 canRestrictAndDelete.command("dban", async (ctx) => {
   const params = getRestrictionParameters(ctx);
@@ -211,9 +197,6 @@ canRestrict.command("mute", async (ctx) => {
     fmt`Muted ${
       mentionUser(params.user, params.user)
     }${params.readableUntilDate}.`,
-    {
-      reply_markup: new InlineKeyboard().text("Undo", "unmute"),
-    },
   );
 });
 
@@ -225,13 +208,6 @@ canRestrict.command("unmute", async (ctx) => {
   }
   await ctx.restrictChatMember(params.user, unmute);
   await ctx.replyFmt(`Unmuted ${mentionUser(params.user, params.user)}.`);
-});
-
-canRestrict.callbackQuery("unmute", async (ctx) => {
-  const target = getTarget(ctx);
-  if (target) {
-    await revertAction(ctx, () => ctx.restrictChatMember(target, unmute));
-  }
 });
 
 canRestrictAndDelete.command("dmute", async (ctx) => {
