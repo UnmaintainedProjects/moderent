@@ -31,14 +31,13 @@ const composer = new Composer<Context>();
 
 export default composer;
 
-const withErrorBoundary = composer;
+const message = composer.on("message");
 
-const message = withErrorBoundary.on("message");
-
-const canRestrict = message.filter(withRights("can_restrict_members"));
-const canRestrictAndDelete = message.filter(
-  withRights(["can_restrict_members", "can_delete_messages"]),
-);
+const canRestrict = withRights("can_restrict_members");
+const canRestrictAndDelete = withRights([
+  "can_restrict_members",
+  "can_delete_messages",
+]);
 
 function logBan(
   params: RestrictionParameters,
@@ -56,7 +55,7 @@ function logBan(
   );
 }
 
-canRestrict.command("ban", async (ctx) => {
+message.command("ban", canRestrict, async (ctx) => {
   const params = getRestrictionParameters(ctx);
   if (!params.user) {
     await ctx.reply("Target not specified.");
@@ -92,7 +91,7 @@ function logUnban(
   );
 }
 
-canRestrict.command("unban", async (ctx) => {
+message.command("unban", canRestrict, async (ctx) => {
   const params = getRestrictionParameters(ctx, true);
   if (!params.user) {
     await ctx.reply("Target not specified.");
@@ -103,7 +102,7 @@ canRestrict.command("unban", async (ctx) => {
   await ctx.replyFmt(fmt`Unbanned ${mentionUser(params.user, params.user)}.`);
 });
 
-canRestrictAndDelete.command("dban", async (ctx) => {
+message.command("dban", canRestrictAndDelete, async (ctx) => {
   const params = getRestrictionParameters(ctx);
   if (!params.user) {
     await ctx.reply("Target not specified.");
@@ -136,7 +135,7 @@ function logKick(
   );
 }
 
-canRestrict.command("kick", async (ctx) => {
+message.command("kick", canRestrict, async (ctx) => {
   const params = getRestrictionParameters(ctx, true);
   if (!params.user) {
     await ctx.reply("Target not specified.");
@@ -153,7 +152,7 @@ canRestrict.command("kick", async (ctx) => {
   );
 });
 
-canRestrictAndDelete.command("dkick", async (ctx) => {
+message.command("dkick", canRestrictAndDelete, async (ctx) => {
   const params = getRestrictionParameters(ctx, true);
   if (!params.user) {
     await ctx.reply("Target not specified.");
@@ -184,7 +183,7 @@ const unmute = {
   can_add_web_page_previews: true,
 };
 
-canRestrict.command("mute", async (ctx) => {
+message.command("mute", canRestrict, async (ctx) => {
   const params = getRestrictionParameters(ctx);
   if (!params.user) {
     await ctx.reply("Target not specified.");
@@ -200,7 +199,7 @@ canRestrict.command("mute", async (ctx) => {
   );
 });
 
-canRestrict.command("unmute", async (ctx) => {
+message.command("unmute", canRestrict, async (ctx) => {
   const params = getRestrictionParameters(ctx, true);
   if (!params.user) {
     await ctx.reply("Target not specified.");
@@ -210,7 +209,7 @@ canRestrict.command("unmute", async (ctx) => {
   await ctx.replyFmt(`Unmuted ${mentionUser(params.user, params.user)}.`);
 });
 
-canRestrictAndDelete.command("dmute", async (ctx) => {
+message.command("dmute", canRestrict, async (ctx) => {
   const params = getRestrictionParameters(ctx);
   if (!params.user) {
     await ctx.reply("Target not specified.");

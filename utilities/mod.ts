@@ -18,4 +18,4 @@
 export * from "./input.ts";
 export * from "./types.ts";
 export * from "./logger.ts";
-export * from "./filters.ts";
+export * from "./middleware.ts";

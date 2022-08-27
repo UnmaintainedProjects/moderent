@@ -21,6 +21,7 @@ import messages from "./messages.ts";
 import { Context } from "$utilities";
 import { Composer } from "grammy";
 import { Chat } from "grammy/types.ts";
+import { autoQuote } from "grammy_autoquote";
 
 const composer = new Composer<Context>();
 
@@ -32,12 +33,9 @@ const group = composer.filter((
   return !!ctx.chat?.type.endsWith("group");
 });
 
-const admin = group.filter((ctx) =>
-  !!ctx.from && ctx.session.admins.has(ctx.from.id)
-);
-
-admin.use(restrictions);
-admin.use(messages);
+group.use(autoQuote);
+group.use(restrictions);
+group.use(messages);
 
 composer.filter((ctx) =>
   !!ctx.from && ctx.session.admins.get(ctx.from.id)?.status == "creator"
