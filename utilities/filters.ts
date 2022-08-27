@@ -55,11 +55,3 @@ export function withRights(
     return false;
   };
 }
-
-export const withReply = async (ctx: Context) => {
-  const isReply = !!ctx.message?.reply_to_message;
-  if (!isReply) {
-    await ctx.reply("Reply a message.");
-  }
-  return isReply;
-};

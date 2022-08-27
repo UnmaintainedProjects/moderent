@@ -15,36 +15,29 @@
  * along with Moderent.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { Context, withReply, withRights } from "$utilities";
+import { Context, withRights } from "$utilities";
 import { Composer } from "grammy";
 
 const composer = new Composer<Context>();
 
 export default composer;
 
-const message = composer.on("::bot_command").filter(withReply)
-  .filter(
-    (
-      ctx,
-    ): ctx is (typeof ctx) & {
-      message: NonNullable<(typeof ctx)["message"]> & {
-        reply_to_message: NonNullable<
-          NonNullable<(typeof ctx)["message"]>["reply_to_message"]
-        >;
-      };
-    } => {
-      return true;
-    },
-  );
-
-const canPin = message.filter(withRights("can_pin_messages"));
+const canPin = composer.on("message").filter(withRights("can_pin_messages"));
 
 canPin.command("pin", async (ctx) => {
+  if (!ctx.message?.reply_to_message) {
+    await ctx.reply("Reply a message to pin.");
+    return;
+  }
   await ctx.pinChatMessage(ctx.message.reply_to_message.message_id);
   await ctx.reply("Pinned.");
 });
 
 canPin.command("unpin", async (ctx) => {
+  if (!ctx.message?.reply_to_message) {
+    await ctx.reply("Reply a pinned message to unpin.");
+    return;
+  }
   await ctx.unpinChatMessage(ctx.message.reply_to_message.message_id);
   await ctx.reply("Unpinned.");
 });
