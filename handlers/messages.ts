@@ -22,9 +22,10 @@ const composer = new Composer<Context>();
 
 export default composer;
 
-const canPin = composer.on("message").filter(withRights("can_pin_messages"));
+const message = composer.on("message");
+const canPin = withRights("can_pin_messages");
 
-canPin.command("pin", async (ctx) => {
+message.command("pin", canPin, async (ctx) => {
   if (!ctx.message?.reply_to_message) {
     await ctx.reply("Reply a message to pin.");
     return;
@@ -33,7 +34,7 @@ canPin.command("pin", async (ctx) => {
   await ctx.reply("Pinned.");
 });
 
-canPin.command("unpin", async (ctx) => {
+message.command("unpin", canPin, async (ctx) => {
   if (!ctx.message?.reply_to_message) {
     await ctx.reply("Reply a pinned message to unpin.");
     return;
