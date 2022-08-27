@@ -16,7 +16,7 @@
  */
 
 import { Context, Session } from "./types.ts";
-import { session as session_ } from "grammy";
+import { Middleware, session as session_ } from "grammy";
 import { ChatAdministratorRights } from "grammy/types.ts";
 
 export const session = session_({
@@ -29,29 +29,29 @@ export function withRights(
   requiredRights:
     | keyof ChatAdministratorRights
     | (keyof ChatAdministratorRights)[],
-) {
-  return async (ctx: Context & { from: NonNullable<Context["from"]> }) => {
-    const rights = ctx.session.admins.get(ctx.from.id);
+): Middleware<Context> {
+  return async (ctx, next) => {
     requiredRights = Array.isArray(requiredRights)
       ? requiredRights
       : [requiredRights];
-    if (rights) {
+    if (ctx.has("message")) {
+      const rights = ctx.session.admins.get(ctx.from.id);
       if (
-        rights.status == "creator" || (
+        rights && (rights.status == "creator" || (
           rights.status == "administrator" &&
           requiredRights.map((v) => rights[v]).filter((v) => v).length ==
             requiredRights.length
-        )
+        ))
       ) {
-        return true;
+        await next();
+      } else {
+        const text = "Permission denied.";
+        if (ctx.message) {
+          await ctx.reply(text);
+        } else if (ctx.callbackQuery) {
+          await ctx.answerCallbackQuery({ text, show_alert: true });
+        }
       }
     }
-    const text = "Permission denied.";
-    if (ctx.message) {
-      await ctx.reply(text);
-    } else if (ctx.callbackQuery) {
-      await ctx.answerCallbackQuery({ text, show_alert: true });
-    }
-    return false;
   };
 }
