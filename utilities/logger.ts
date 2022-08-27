@@ -17,11 +17,13 @@
 
 import { Context } from "./types.ts";
 import { getLogChat } from "$database";
+import { ChatTypeContext } from "grammy";
+import { User } from "grammy/types.ts";
+import { fmt, FormattedString, mentionUser } from "grammy_parse_mode";
 
-import { Chat } from "grammy/types.ts";
-import { FormattedString } from "grammy_parse_mode";
+type LogContext = ChatTypeContext<Context, "group" | "supergroup">;
 
-export function log(text: FormattedString, ctx: Context & { chat: Chat }) {
+export function log(ctx: LogContext, text: FormattedString) {
   Promise.resolve().then(async () => {
     const logChat = await getLogChat(ctx.chat.id);
     if (logChat) {
@@ -32,4 +34,22 @@ export function log(text: FormattedString, ctx: Context & { chat: Chat }) {
   }).catch((err) => {
     console.error("failed to log an action", err);
   });
+}
+
+export function logRestrictionEvent(
+  ctx: LogContext,
+  type: string,
+  admin: User,
+  target: number | User,
+  reason?: string,
+) {
+  log(
+    ctx,
+    fmt`#${type}\nAdmin: ${mentionUser(admin.first_name, admin.id)}\nTarget: ${
+      mentionUser(
+        typeof target === "number" ? target : target.first_name,
+        typeof target === "number" ? target : target.id,
+      )
+    }\n${reason ? `Reason: ${reason}` : ""}`,
+  );
 }
