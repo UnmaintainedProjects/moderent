@@ -40,7 +40,7 @@ composer.command("setlogchat", async (ctx) => {
 composer.command("logchat", async (ctx) => {
   const logChatId = await getLogChat(ctx.chat.id);
   await ctx.reply(
-    logChatId == null ? "No log chat is set." : `The log chat is ${logChatId}.`,
+    logChatId ? "No log chat is set." : `The log chat is ${logChatId}.`,
   );
 });
 

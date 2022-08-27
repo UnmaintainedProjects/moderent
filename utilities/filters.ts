@@ -16,7 +16,7 @@
  */
 
 import { Context, Session } from "./types.ts";
-import { Middleware, session as session_ } from "grammy";
+import { session as session_ } from "grammy";
 import { ChatAdministratorRights } from "grammy/types.ts";
 
 export const session = session_({
@@ -29,8 +29,8 @@ export function withRights(
   requiredRights:
     | keyof ChatAdministratorRights
     | (keyof ChatAdministratorRights)[],
-): Middleware<Context & { from: NonNullable<Context["from"]> }> {
-  return async (ctx, next) => {
+) {
+  return async (ctx: Context & { from: NonNullable<Context["from"]> }) => {
     const rights = ctx.session.admins.get(ctx.from.id);
     requiredRights = Array.isArray(requiredRights)
       ? requiredRights
@@ -43,7 +43,7 @@ export function withRights(
             requiredRights.length
         )
       ) {
-        return next();
+        return true;
       }
     }
     const text = "Permission denied.";
@@ -52,13 +52,14 @@ export function withRights(
     } else if (ctx.callbackQuery) {
       await ctx.answerCallbackQuery({ text, show_alert: true });
     }
+    return false;
   };
 }
 
-export const withReply: Middleware<Context> = async (ctx, next) => {
-  if (!ctx.message?.reply_to_message) {
+export const withReply = async (ctx: Context) => {
+  const isReply = !!ctx.message?.reply_to_message;
+  if (!isReply) {
     await ctx.reply("Reply a message.");
-  } else {
-    await next();
   }
+  return isReply;
 };
