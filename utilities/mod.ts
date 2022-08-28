@@ -17,5 +17,4 @@
 
 export * from "./arguments.ts";
 export * from "./types.ts";
-export * from "./logging.ts";
 export * from "./middleware.ts";

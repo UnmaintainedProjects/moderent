@@ -15,8 +15,25 @@
  * along with Moderent.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { Database } from "mongo";
+import { Context } from "$utilities";
+import { Composer } from "grammy";
+import { dirname, fromFileUrl, join } from "path";
 
-export let database: Database;
-
-export const setDatabase = (database_: Database) => (database = database_);
+export async function load() {
+  const composer = new Composer<Context>();
+  const path = dirname(fromFileUrl(import.meta.url));
+  for await (
+    const entry of Deno.readDir(path)
+  ) {
+    if (entry.isDirectory) {
+      const { composer: composer_, initialize } = await import(
+        join(path, entry.name, "mod.ts")
+      );
+      if (initialize) {
+        await initialize();
+      }
+      composer.use(composer_);
+    }
+  }
+  return composer;
+}

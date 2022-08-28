@@ -15,7 +15,7 @@
  * along with Moderent.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { database } from "../database.ts";
+import { database } from "$database";
 import { Collection } from "mongo";
 
 export interface LogChat {
@@ -26,7 +26,7 @@ export interface LogChat {
 let collection: Collection<LogChat>;
 const cache = new Map<number, number | null>();
 
-export function initializeLogChats() {
+export function initialize() {
   collection = database.collection<LogChat>("log_chats");
   collection.createIndexes({
     indexes: [

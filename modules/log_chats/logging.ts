@@ -15,8 +15,8 @@
  * along with Moderent.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { Context } from "./types.ts";
-import { getLogChat } from "$database";
+import { getLogChat } from "./database.ts";
+import { Context } from "$utilities";
 import { ChatTypeContext } from "grammy";
 import { User } from "grammy/types.ts";
 import { fmt, FormattedString, mentionUser } from "grammy_parse_mode";
