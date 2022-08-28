@@ -55,11 +55,11 @@ export function getRestrictionParameters(
         const unit = match[2];
         const toAdd = unit == "h" ? time * 60 ** 2 : time * 60 ** 2 * 24;
         params.untilDate = Date.now() / 1000 + toAdd;
-        params.readableUntilDate = `${time} ${
+        const readableUntilDate = `${time} ${
           { "h": "hour", "d": "day" }[unit]
         }${time == 1 ? "" : "s"}`;
-        params.readableUntilDate = params.readableUntilDate
-          ? " for " + params.readableUntilDate
+        params.readableUntilDate = readableUntilDate
+          ? " for " + readableUntilDate
           : "";
       }
     }

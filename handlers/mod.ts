@@ -31,7 +31,4 @@ const group = composer.chatType(["group", "supergroup"]);
 group.use(autoQuote);
 group.use(messages);
 group.use(restrictions);
-
-group.filter((ctx) =>
-  !!ctx.from && ctx.session.admins.get(ctx.from.id)?.status == "creator"
-).use(logChat);
+group.use(logChat);

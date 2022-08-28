@@ -16,15 +16,17 @@
  */
 
 import { getLogChat, setLogChat, unsetLogChat } from "$database";
-import { Context } from "$utilities";
-import { Composer, GrammyError } from "grammy";
+import { Context, withRights } from "$utilities";
+import { Composer, Filter, GrammyError } from "grammy";
 import errors from "bot-api-errors" assert { type: "json" };
 
-const composer = new Composer<Context>();
+const composer = new Composer<Filter<Context, "message">>();
 
 export default composer;
 
-composer.command("setlogchat", async (ctx) => {
+const rights = withRights("owner");
+
+composer.command("setlogchat", rights, async (ctx) => {
   const logChatId = Number(ctx.message?.text.split(/\s/)[1]);
   if (isNaN(logChatId)) {
     await ctx.reply("Give me a chat ID.");
@@ -38,7 +40,7 @@ composer.command("setlogchat", async (ctx) => {
           const administrators = await ctx.api.getChatAdministrators(
             logChatId,
           );
-          if (administrators.map((v) => v.user.id).includes(ctx.from!.id)) {
+          if (administrators.map((v) => v.user.id).includes(ctx.from.id)) {
             await setLogChat(ctx.chat.id, logChatId);
             await ctx.reply("Log chat updated.");
           } else {
@@ -66,14 +68,14 @@ composer.command("setlogchat", async (ctx) => {
   }
 });
 
-composer.command("logchat", async (ctx) => {
+composer.command("logchat", rights, async (ctx) => {
   const logChatId = await getLogChat(ctx.chat.id);
   await ctx.reply(
     logChatId ? "No log chat is set." : `The log chat is ${logChatId}.`,
   );
 });
 
-composer.command("unsetlogchat", async (ctx) => {
+composer.command("unsetlogchat", rights, async (ctx) => {
   const unset = await unsetLogChat(ctx.chat.id);
   await ctx.reply(unset ? "Removed the log chat." : "No log chat is set.");
 });

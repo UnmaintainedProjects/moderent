@@ -30,15 +30,13 @@ const composer = new Composer<
 
 export default composer;
 
-const message = composer.on("message");
-
-const canRestrict = withRights("can_restrict_members");
-const canRestrictAndDelete = withRights([
+const rights = withRights("can_restrict_members");
+const rights2 = withRights([
   "can_restrict_members",
   "can_delete_messages",
 ]);
 
-message.command("ban", canRestrict, async (ctx) => {
+composer.command("ban", rights, async (ctx) => {
   const params = getRestrictionParameters(ctx);
   if (!params.user) {
     await ctx.reply("Target not specified.");
@@ -53,7 +51,7 @@ message.command("ban", canRestrict, async (ctx) => {
   );
 });
 
-message.command("unban", canRestrict, async (ctx) => {
+composer.command("unban", rights, async (ctx) => {
   const params = getRestrictionParameters(ctx, true);
   if (!params.user) {
     await ctx.reply("Target not specified.");
@@ -64,7 +62,7 @@ message.command("unban", canRestrict, async (ctx) => {
   await ctx.replyFmt(fmt`Unbanned ${mentionUser(params.user, params.user)}.`);
 });
 
-message.command("dban", canRestrictAndDelete, async (ctx) => {
+composer.command("dban", rights2, async (ctx) => {
   const params = getRestrictionParameters(ctx);
   if (!params.user) {
     await ctx.reply("Target not specified.");
@@ -81,7 +79,7 @@ message.command("dban", canRestrictAndDelete, async (ctx) => {
   }
 });
 
-message.command("kick", canRestrict, async (ctx) => {
+composer.command("kick", rights, async (ctx) => {
   const params = getRestrictionParameters(ctx, true);
   if (!params.user) {
     await ctx.reply("Target not specified.");
@@ -98,7 +96,7 @@ message.command("kick", canRestrict, async (ctx) => {
   );
 });
 
-message.command("dkick", canRestrictAndDelete, async (ctx) => {
+composer.command("dkick", rights2, async (ctx) => {
   const params = getRestrictionParameters(ctx, true);
   if (!params.user) {
     await ctx.reply("Target not specified.");
@@ -116,26 +114,13 @@ message.command("dkick", canRestrictAndDelete, async (ctx) => {
   }
 });
 
-const mute = { can_send_messages: false };
-
-const unmute = {
-  can_send_polls: true,
-  can_change_info: true,
-  can_invite_users: true,
-  can_pin_messages: true,
-  can_send_messages: true,
-  can_send_media_messages: true,
-  can_send_other_messages: true,
-  can_add_web_page_previews: true,
-};
-
-message.command("mute", canRestrict, async (ctx) => {
+composer.command("mute", rights, async (ctx) => {
   const params = getRestrictionParameters(ctx);
   if (!params.user) {
     await ctx.reply("Target not specified.");
     return;
   }
-  await ctx.restrictChatMember(params.user, mute, {
+  await ctx.restrictChatMember(params.user, { can_send_messages: false }, {
     until_date: params.untilDate,
   });
   logRestrictionEvent(ctx, "MUTE", ctx.from, params.user, params.reason);
@@ -146,24 +131,33 @@ message.command("mute", canRestrict, async (ctx) => {
   );
 });
 
-message.command("unmute", canRestrict, async (ctx) => {
+composer.command("unmute", rights, async (ctx) => {
   const params = getRestrictionParameters(ctx, true);
   if (!params.user) {
     await ctx.reply("Target not specified.");
     return;
   }
-  await ctx.restrictChatMember(params.user, unmute);
+  await ctx.restrictChatMember(params.user, {
+    can_send_polls: true,
+    can_change_info: true,
+    can_invite_users: true,
+    can_pin_messages: true,
+    can_send_messages: true,
+    can_send_media_messages: true,
+    can_send_other_messages: true,
+    can_add_web_page_previews: true,
+  });
   logRestrictionEvent(ctx, "UNMUTE", ctx.from, params.user, params.reason);
   await ctx.replyFmt(`Unmuted ${mentionUser(params.user, params.user)}.`);
 });
 
-message.command("dmute", canRestrict, async (ctx) => {
+composer.command("dmute", rights, async (ctx) => {
   const params = getRestrictionParameters(ctx);
   if (!params.user) {
     await ctx.reply("Target not specified.");
     return;
   }
-  await ctx.restrictChatMember(params.user, mute, {
+  await ctx.restrictChatMember(params.user, { can_send_messages: false }, {
     until_date: params.untilDate,
   });
   logRestrictionEvent(ctx, "MUTE", ctx.from, params.user, params.reason);

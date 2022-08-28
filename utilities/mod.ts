@@ -15,7 +15,7 @@
  * along with Moderent.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-export * from "./input.ts";
+export * from "./arguments.ts";
 export * from "./types.ts";
-export * from "./logger.ts";
+export * from "./logging.ts";
 export * from "./middleware.ts";

@@ -27,21 +27,23 @@ export const session = session_({
 
 export function withRights(
   requiredRights:
-    | keyof ChatAdministratorRights
-    | (keyof ChatAdministratorRights)[],
+    | ((keyof ChatAdministratorRights) | "owner")
+    | (((keyof ChatAdministratorRights) | "owner"))[],
 ): Middleware<Context> {
   return async (ctx, next) => {
-    requiredRights = Array.isArray(requiredRights)
-      ? requiredRights
-      : [requiredRights];
     if (ctx.has("message")) {
+      requiredRights = Array.isArray(requiredRights)
+        ? requiredRights
+        : [requiredRights];
       const rights = ctx.session.admins.get(ctx.from.id);
       if (
-        rights && (rights.status == "creator" || (
-          rights.status == "administrator" &&
-          requiredRights.map((v) => rights[v]).filter((v) => v).length ==
-            requiredRights.length
-        ))
+        rights && ((requiredRights.includes("owner") &&
+          rights.status == "creator") || (rights.status == "creator" || (
+            rights.status == "administrator" &&
+            (requiredRights as (keyof ChatAdministratorRights)[]).every((
+              v,
+            ) => rights[v])
+          )))
       ) {
         await next();
       } else {
