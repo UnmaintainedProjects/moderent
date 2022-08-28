@@ -25,7 +25,6 @@ const filter = composer.chatType("supergroup");
 const rights = withRights("can_restrict_members");
 const rights2 = withRights(["can_restrict_members", "can_delete_messages"]);
 
-
 filter.command("ban", rights, async (ctx) => {
   const params = getRestrictionParameters(ctx);
   if (!params.user) {
@@ -160,4 +159,4 @@ filter.command("dmute", rights, async (ctx) => {
   }
 });
 
-export {composer};
+export { composer };
