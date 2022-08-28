@@ -35,28 +35,27 @@ composer.command("setlogchat", async (ctx) => {
       try {
         const chat = await ctx.api.getChat(logChatId);
         if (chat.type == "channel") {
-          const member = await ctx.api.getChatMember(logChatId, ctx.me.id);
-          if (member.status == "administrator" && member.can_post_messages) {
-            const administrators = await ctx.api.getChatAdministrators(
-              logChatId,
-            );
-            if (administrators.map((v) => v.user.id).includes(ctx.from!.id)) {
-              await setLogChat(ctx.chat.id, logChatId);
-              await ctx.reply("Log chat updated.");
-            } else {
-              await ctx.reply("You are not an administrator of that channel.");
-            }
+          const administrators = await ctx.api.getChatAdministrators(
+            logChatId,
+          );
+          if (administrators.map((v) => v.user.id).includes(ctx.from!.id)) {
+            await setLogChat(ctx.chat.id, logChatId);
+            await ctx.reply("Log chat updated.");
           } else {
-            await ctx.reply(
-              "I can't post messages in the provided channel.",
-            );
+            await ctx.reply("You are not an administrator of that channel.");
           }
         } else {
           await ctx.reply("The provided chat is not a channel.");
         }
       } catch (err) {
         if (
-          err instanceof GrammyError && err.description == errors.ChatNotFound
+          err instanceof GrammyError &&
+          [
+            errors.BotIsNotAMemberOfTheChannelChat,
+            errors.BotIsNotAMemberOfTheGroupChat,
+            errors.BotIsNotAMemberOfTheSupergroupChat,
+            errors.ChatNotFound,
+          ].includes(err.description)
         ) {
           await ctx.reply("I can't reach this chat.");
         } else {
