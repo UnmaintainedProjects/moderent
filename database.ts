@@ -15,18 +15,15 @@
  * along with Moderent.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import logChat from "./log_chat.ts";
-import messages from "./messages.ts";
-import restrictions from "./restrictions.ts";
-import { Context } from "$utilities";
-import { Composer } from "grammy";
-import { autoQuote } from "grammy_autoquote";
+import { Database, MongoClient } from "mongo";
+import env from "./env.ts";
 
-const composer = new Composer<Context>();
+const client = new MongoClient();
 
-export default composer;
+export let database: Database;
 
-composer.use(autoQuote);
-composer.use(messages);
-composer.use(restrictions);
-composer.use(logChat);
+export const setDatabase = (database_: Database) => (database = database_);
+
+export async function connect() {
+  setDatabase(await client.connect(env.MONGODB_URI));
+}

@@ -15,12 +15,12 @@
  * along with Moderent.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { getLogChat, setLogChat, unsetLogChat } from "$database";
+import { getLogChat, setLogChat, unsetLogChat } from "./database.ts";
 import { Context, withRights } from "$utilities";
 import { Composer, GrammyError } from "grammy";
 import errors from "bot-api-errors" assert { type: "json" };
 
-const composer = new Composer<Context>();
+export const composer = new Composer<Context>();
 const filter = composer.chatType("supergroup");
 const rights = withRights("owner");
 
@@ -80,5 +80,3 @@ filter.command("unsetlogchat", rights, async (ctx) => {
   const unset = await unsetLogChat(ctx.chat.id);
   await ctx.reply(unset ? "Removed the log chat." : "No log chat is set.");
 });
-
-export default composer;

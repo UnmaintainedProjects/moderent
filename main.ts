@@ -16,21 +16,26 @@
  */
 
 import env from "./env.ts";
-import { connect } from "./database/mod.ts";
+import { connect } from "$database";
+import { load } from "./modules/mod.ts";
 import workers from "./workers/mod.ts";
-import handlers from "./handlers/mod.ts";
-import { Context, session } from "./utilities/mod.ts";
+import { Context, session } from "$utilities";
 import { Bot } from "grammy";
+import { autoQuote } from "grammy_autoquote";
 import { hydrateReply } from "grammy_parse_mode";
 
 const bot = new Bot<Context>(env.BOT_TOKEN);
 
+await connect();
+
+bot.chatType("supergroup").use(autoQuote);
 bot.use(hydrateReply);
 bot.use(session);
 bot.use(workers);
-bot.use(handlers);
 
-await connect();
+const modules = await load();
+
+bot.use(modules);
 
 bot.start({
   drop_pending_updates: true,

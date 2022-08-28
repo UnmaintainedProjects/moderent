@@ -18,7 +18,7 @@
 import { Context, withRights } from "$utilities";
 import { Composer } from "grammy";
 
-const composer = new Composer<Context>();
+export const composer = new Composer<Context>();
 const filter = composer.chatType("supergroup");
 const rights = withRights("can_pin_messages");
 
@@ -39,5 +39,3 @@ filter.command("unpin", rights, async (ctx) => {
   await ctx.unpinChatMessage(ctx.message.reply_to_message.message_id);
   await ctx.reply("Unpinned.");
 });
-
-export default composer;

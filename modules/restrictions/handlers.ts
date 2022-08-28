@@ -15,22 +15,15 @@
  * along with Moderent.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import {
-  Context,
-  getRestrictionParameters,
-  logRestrictionEvent,
-  withRights,
-} from "$utilities";
+import { logRestrictionEvent } from "../log_chats/logging.ts";
+import { Context, getRestrictionParameters, withRights } from "$utilities";
 import { Composer } from "grammy";
 import { fmt, mentionUser } from "grammy_parse_mode";
 
 const composer = new Composer<Context>();
 const filter = composer.chatType("supergroup");
 const rights = withRights("can_restrict_members");
-const rights2 = withRights([
-  "can_restrict_members",
-  "can_delete_messages",
-]);
+const rights2 = withRights(["can_restrict_members", "can_delete_messages"]);
 
 filter.command("ban", rights, async (ctx) => {
   const params = getRestrictionParameters(ctx);
@@ -166,4 +159,4 @@ filter.command("dmute", rights, async (ctx) => {
   }
 });
 
-export default composer;
+export { composer };

@@ -8,7 +8,8 @@
     "grammy_autoquote": "https://deno.land/x/grammy_autoquote@v1.1.0/mod.ts",
     "grammy_parse_mode": "https://deno.land/x/grammy_parse_mode@1.4.0/mod.ts",
     "mongo": "https://deno.land/x/mongo@v0.31.0/mod.ts",
-    "$database": "./database/mod.ts",
+    "path": "https://deno.land/std@0.153.0/path/mod.ts",
+    "$database": "./database.ts",
     "$deps": "./deps.ts",
     "$utilities": "./utilities/mod.ts"
   }
