@@ -17,7 +17,8 @@
 
 import { getLogChat, setLogChat, unsetLogChat } from "$database";
 import { Context } from "$utilities";
-import { Composer } from "grammy";
+import { Composer, GrammyError } from "grammy";
+import errors from "bot-api-errors" assert { type: "json" };
 
 const composer = new Composer<Context>();
 
@@ -26,14 +27,36 @@ export default composer;
 composer.command("setlogchat", async (ctx) => {
   const logChatId = Number(ctx.message?.text.split(/\s/)[1]);
   if (isNaN(logChatId)) {
-    await ctx.reply("Give me the log chat's ID.");
-    return;
-  }
-  try {
-    await setLogChat(ctx.chat.id, logChatId);
-    await ctx.reply(`Set the log chat to ${logChatId}.`);
-  } catch (err) {
-    console.log(err);
+    await ctx.reply("Give me a chat ID.");
+  } else {
+    if (ctx.chat.id == logChatId) {
+      await ctx.reply("The log chat cannot be this chat.");
+    } else {
+      try {
+        const chat = await ctx.api.getChat(logChatId);
+        if (chat.type == "channel") {
+          const member = await ctx.api.getChatMember(logChatId, ctx.me.id);
+          if (member.status == "administrator" && member.can_post_messages) {
+            await setLogChat(ctx.chat.id, logChatId);
+            await ctx.reply("Log chat updated.");
+          } else {
+            await ctx.reply(
+              "I can't post messages in the provided channel.",
+            );
+          }
+        } else {
+          await ctx.reply("The provided chat is not a channel.");
+        }
+      } catch (err) {
+        if (
+          err instanceof GrammyError && err.description == errors.ChatNotFound
+        ) {
+          await ctx.reply("I can't reach this chat.");
+        } else {
+          throw err;
+        }
+      }
+    }
   }
 });
 
