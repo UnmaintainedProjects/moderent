@@ -26,9 +26,7 @@ const composer = new Composer<Context>();
 
 export default composer;
 
-const group = composer.chatType(["group", "supergroup"]);
-
-group.use(autoQuote);
-group.use(messages);
-group.use(restrictions);
-group.use(logChat);
+composer.use(autoQuote);
+composer.use(messages);
+composer.use(restrictions);
+composer.use(logChat);

@@ -21,22 +21,18 @@ import {
   logRestrictionEvent,
   withRights,
 } from "$utilities";
-import { ChatTypeContext, Composer } from "grammy";
+import { Composer } from "grammy";
 import { fmt, mentionUser } from "grammy_parse_mode";
 
-const composer = new Composer<
-  ChatTypeContext<Context, "group" | "supergroup">
->();
-
-export default composer;
-
+const composer = new Composer<Context>();
+const filter = composer.chatType("supergroup");
 const rights = withRights("can_restrict_members");
 const rights2 = withRights([
   "can_restrict_members",
   "can_delete_messages",
 ]);
 
-composer.command("ban", rights, async (ctx) => {
+filter.command("ban", rights, async (ctx) => {
   const params = getRestrictionParameters(ctx);
   if (!params.user) {
     await ctx.reply("Target not specified.");
@@ -51,7 +47,7 @@ composer.command("ban", rights, async (ctx) => {
   );
 });
 
-composer.command("unban", rights, async (ctx) => {
+filter.command("unban", rights, async (ctx) => {
   const params = getRestrictionParameters(ctx, true);
   if (!params.user) {
     await ctx.reply("Target not specified.");
@@ -62,7 +58,7 @@ composer.command("unban", rights, async (ctx) => {
   await ctx.replyFmt(fmt`Unbanned ${mentionUser(params.user, params.user)}.`);
 });
 
-composer.command("dban", rights2, async (ctx) => {
+filter.command("dban", rights2, async (ctx) => {
   const params = getRestrictionParameters(ctx);
   if (!params.user) {
     await ctx.reply("Target not specified.");
@@ -79,7 +75,7 @@ composer.command("dban", rights2, async (ctx) => {
   }
 });
 
-composer.command("kick", rights, async (ctx) => {
+filter.command("kick", rights, async (ctx) => {
   const params = getRestrictionParameters(ctx, true);
   if (!params.user) {
     await ctx.reply("Target not specified.");
@@ -96,7 +92,7 @@ composer.command("kick", rights, async (ctx) => {
   );
 });
 
-composer.command("dkick", rights2, async (ctx) => {
+filter.command("dkick", rights2, async (ctx) => {
   const params = getRestrictionParameters(ctx, true);
   if (!params.user) {
     await ctx.reply("Target not specified.");
@@ -114,7 +110,7 @@ composer.command("dkick", rights2, async (ctx) => {
   }
 });
 
-composer.command("mute", rights, async (ctx) => {
+filter.command("mute", rights, async (ctx) => {
   const params = getRestrictionParameters(ctx);
   if (!params.user) {
     await ctx.reply("Target not specified.");
@@ -131,7 +127,7 @@ composer.command("mute", rights, async (ctx) => {
   );
 });
 
-composer.command("unmute", rights, async (ctx) => {
+filter.command("unmute", rights, async (ctx) => {
   const params = getRestrictionParameters(ctx, true);
   if (!params.user) {
     await ctx.reply("Target not specified.");
@@ -151,7 +147,7 @@ composer.command("unmute", rights, async (ctx) => {
   await ctx.replyFmt(`Unmuted ${mentionUser(params.user, params.user)}.`);
 });
 
-composer.command("dmute", rights, async (ctx) => {
+filter.command("dmute", rights, async (ctx) => {
   const params = getRestrictionParameters(ctx);
   if (!params.user) {
     await ctx.reply("Target not specified.");
@@ -169,3 +165,5 @@ composer.command("dmute", rights, async (ctx) => {
     );
   }
 });
+
+export default composer;

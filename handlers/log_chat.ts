@@ -21,12 +21,10 @@ import { Composer, GrammyError } from "grammy";
 import errors from "bot-api-errors" assert { type: "json" };
 
 const composer = new Composer<Context>();
-
-export default composer;
-
+const filter = composer.chatType("supergroup");
 const rights = withRights("owner");
 
-composer.command("setlogchat", rights, async (ctx) => {
+filter.command("setlogchat", rights, async (ctx) => {
   const logChatId = Number(ctx.message?.text.split(/\s/)[1]);
   if (isNaN(logChatId)) {
     await ctx.reply("Give me a chat ID.");
@@ -71,14 +69,16 @@ composer.command("setlogchat", rights, async (ctx) => {
   }
 });
 
-composer.command("logchat", rights, async (ctx) => {
+filter.command("logchat", rights, async (ctx) => {
   const logChatId = await getLogChat(ctx.chat.id);
   await ctx.reply(
     logChatId ? "No log chat is set." : `The log chat is ${logChatId}.`,
   );
 });
 
-composer.command("unsetlogchat", rights, async (ctx) => {
+filter.command("unsetlogchat", rights, async (ctx) => {
   const unset = await unsetLogChat(ctx.chat.id);
   await ctx.reply(unset ? "Removed the log chat." : "No log chat is set.");
 });
+
+export default composer;
