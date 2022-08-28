@@ -37,8 +37,15 @@ composer.command("setlogchat", async (ctx) => {
         if (chat.type == "channel") {
           const member = await ctx.api.getChatMember(logChatId, ctx.me.id);
           if (member.status == "administrator" && member.can_post_messages) {
-            await setLogChat(ctx.chat.id, logChatId);
-            await ctx.reply("Log chat updated.");
+            const administrators = await ctx.api.getChatAdministrators(
+              logChatId,
+            );
+            if (administrators.map((v) => v.user.id).includes(ctx.from!.id)) {
+              await setLogChat(ctx.chat.id, logChatId);
+              await ctx.reply("Log chat updated.");
+            } else {
+              await ctx.reply("You are not an administrator of that channel.");
+            }
           } else {
             await ctx.reply(
               "I can't post messages in the provided channel.",
