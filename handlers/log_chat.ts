@@ -17,10 +17,10 @@
 
 import { getLogChat, setLogChat, unsetLogChat } from "$database";
 import { Context, withRights } from "$utilities";
-import { Composer, Filter, GrammyError } from "grammy";
+import { Composer, GrammyError } from "grammy";
 import errors from "bot-api-errors" assert { type: "json" };
 
-const composer = new Composer<Filter<Context, "message">>();
+const composer = new Composer<Context>();
 
 export default composer;
 
@@ -40,7 +40,10 @@ composer.command("setlogchat", rights, async (ctx) => {
           const administrators = await ctx.api.getChatAdministrators(
             logChatId,
           );
-          if (administrators.map((v) => v.user.id).includes(ctx.from.id)) {
+          if (
+            ctx.from &&
+            administrators.map((v) => v.user.id).includes(ctx.from.id)
+          ) {
             await setLogChat(ctx.chat.id, logChatId);
             await ctx.reply("Log chat updated.");
           } else {
