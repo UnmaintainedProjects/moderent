@@ -22,11 +22,23 @@ import { dirname, fromFileUrl, join } from "path";
 export async function load() {
   const composer = new Composer<Context>();
   const path = dirname(fromFileUrl(import.meta.url));
-  const directories = [...Deno.readDirSync(path)].filter((v) => v.isDirectory)
-    .map((v) => v.name).sort();
-  for (
-    const directory of directories
-  ) {
+  let order = "";
+  try {
+    order = await Deno.readTextFile(join(path, ".order"));
+  } catch (_err) {
+    //
+  }
+  const [first, last = []] = order
+    .split("...").map((v) => v.split("\n"));
+  const directories = [
+    ...first,
+    ...[...Deno.readDirSync(path)].filter((v) => v.isDirectory)
+      .map((v) => v.name).filter((v) =>
+        !first.includes(v) && !last.includes(v)
+      ),
+    ...last,
+  ];
+  for (const directory of directories) {
     const { composer: composer_, initialize } = await import(
       join(path, directory, "mod.ts")
     );
