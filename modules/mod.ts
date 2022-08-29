@@ -22,19 +22,19 @@ import { dirname, fromFileUrl, join } from "path";
 export async function load() {
   const composer = new Composer<Context>();
   const path = dirname(fromFileUrl(import.meta.url));
-  for await (
-    const entry of Deno.readDir(path)
+  const directories = [...Deno.readDirSync(path)].filter((v) => v.isDirectory)
+    .map((v) => v.name).sort();
+  for (
+    const directory of directories
   ) {
-    if (entry.isDirectory) {
-      const { composer: composer_, initialize } = await import(
-        join(path, entry.name, "mod.ts")
-      );
-      if (initialize) {
-        await initialize();
-      }
-      if (composer_) {
-        composer.use(composer_);
-      }
+    const { composer: composer_, initialize } = await import(
+      join(path, directory, "mod.ts")
+    );
+    if (initialize) {
+      await initialize();
+    }
+    if (composer_) {
+      composer.use(composer_);
     }
   }
   return composer;
