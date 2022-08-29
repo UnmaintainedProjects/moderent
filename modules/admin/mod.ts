@@ -15,11 +15,4 @@
  * along with Moderent.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { Session } from "./types.ts";
-import { session as session_ } from "grammy";
-
-export const session = session_({
-  initial: (): Session => ({
-    admins: new Map(),
-  }),
-});
+export { composer } from "./handlers.ts";

@@ -15,8 +15,9 @@
  * along with Moderent.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+import { getRestrictionParameters, withRights } from "./utilities.ts";
 import { logRestrictionEvent } from "../log_chats/logging.ts";
-import { Context, getRestrictionParameters, withRights } from "$utilities";
+import { Context } from "$utilities";
 import { Composer } from "grammy";
 import { fmt, mentionUser } from "grammy_parse_mode";
 
@@ -24,6 +25,7 @@ const composer = new Composer<Context>();
 const filter = composer.chatType("supergroup");
 const rights = withRights("can_restrict_members");
 const rights2 = withRights(["can_restrict_members", "can_delete_messages"]);
+const rights3 = withRights("can_pin_messages");
 
 filter.command("ban", rights, async (ctx) => {
   const params = getRestrictionParameters(ctx);
@@ -157,6 +159,24 @@ filter.command("dmute", rights, async (ctx) => {
       ctx.msg.reply_to_message.message_id,
     );
   }
+});
+
+filter.command("pin", rights3, async (ctx) => {
+  if (!ctx.message?.reply_to_message) {
+    await ctx.reply("Reply a message to pin.");
+    return;
+  }
+  await ctx.pinChatMessage(ctx.message.reply_to_message.message_id);
+  await ctx.reply("Pinned.");
+});
+
+filter.command("unpin", rights3, async (ctx) => {
+  if (!ctx.message?.reply_to_message) {
+    await ctx.reply("Reply a pinned message to unpin.");
+    return;
+  }
+  await ctx.unpinChatMessage(ctx.message.reply_to_message.message_id);
+  await ctx.reply("Unpinned.");
 });
 
 export { composer };
