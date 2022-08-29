@@ -46,7 +46,9 @@ filter.command("setlogchannel", rights, async (ctx) => {
             await setLogChannel(ctx.chat.id, logChannelId);
             await ctx.reply("Log channel updated.");
           } else {
-            await ctx.reply("You are not an administrator of the provided channel.");
+            await ctx.reply(
+              "You are not an administrator of the provided channel.",
+            );
           }
         } else {
           await ctx.reply("The ID is not a channel ID.");
@@ -73,11 +75,15 @@ filter.command("setlogchannel", rights, async (ctx) => {
 filter.command("logchannel", rights, async (ctx) => {
   const logChannelId = await getLogChannel(ctx.chat.id);
   await ctx.reply(
-    logChannelId ? "No log channel is set." : `The log channel is ${logChannelId}.`,
+    logChannelId
+      ? "No log channel is set."
+      : `The log channel is ${logChannelId}.`,
   );
 });
 
 filter.command("unsetlogchannel", rights, async (ctx) => {
   const unset = await unsetLogChannel(ctx.chat.id);
-  await ctx.reply(unset ? "The log channel was removed." : "No log chat is set.");
+  await ctx.reply(
+    unset ? "The log channel was removed." : "No log chat is set.",
+  );
 });
