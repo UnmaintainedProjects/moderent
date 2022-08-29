@@ -16,7 +16,6 @@
  */
 
 import env from "./env.ts";
-import { connect } from "$database";
 import { load } from "./modules/mod.ts";
 import workers from "./workers/mod.ts";
 import { Context, session } from "$utilities";
@@ -25,8 +24,6 @@ import { autoQuote } from "grammy_autoquote";
 import { hydrateReply } from "grammy_parse_mode";
 
 const bot = new Bot<Context>(env.BOT_TOKEN);
-
-await connect();
 
 bot.chatType("supergroup").use(autoQuote);
 bot.use(hydrateReply);

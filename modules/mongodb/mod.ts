@@ -15,11 +15,12 @@
  * along with Moderent.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { config } from "dotenv";
-import { cleanEnv, str } from "envalid";
+import { setDatabase } from "./database.ts";
+import env from "./env.ts";
+import { MongoClient } from "mongo";
 
-await config({ export: true });
+const client = new MongoClient();
 
-export default cleanEnv(Deno.env.toObject(), {
-  BOT_TOKEN: str(),
-});
+export async function initialize() {
+  setDatabase(await client.connect(env.MONGODB_URI));
+}
