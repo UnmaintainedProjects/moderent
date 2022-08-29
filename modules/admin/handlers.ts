@@ -16,7 +16,7 @@
  */
 
 import { getRestrictionParameters, withRights } from "./utilities.ts";
-import { logRestrictionEvent } from "../log_chats/logging.ts";
+import { logRestrictionEvent } from "../log_channels/logging.ts";
 import { Context } from "$utilities";
 import { Composer } from "grammy";
 import { fmt, mentionUser } from "grammy_parse_mode";

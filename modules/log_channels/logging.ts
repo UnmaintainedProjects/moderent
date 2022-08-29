@@ -15,7 +15,7 @@
  * along with Moderent.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { getLogChat } from "./database.ts";
+import { getLogChannel } from "./database.ts";
 import { Context } from "$utilities";
 import { ChatTypeContext } from "grammy";
 import { User } from "grammy/types.ts";
@@ -25,9 +25,9 @@ type LogContext = ChatTypeContext<Context, "group" | "supergroup">;
 
 export function log(ctx: LogContext, text: FormattedString) {
   Promise.resolve().then(async () => {
-    const logChat = await getLogChat(ctx.chat.id);
-    if (logChat) {
-      await ctx.api.sendMessage(logChat, text.toString(), {
+    const logChatId = await getLogChannel(ctx.chat.id);
+    if (logChatId) {
+      await ctx.api.sendMessage(logChatId, text.toString(), {
         entities: text.entities,
       });
     }
