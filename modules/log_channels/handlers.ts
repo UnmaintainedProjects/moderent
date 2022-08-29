@@ -15,8 +15,9 @@
  * along with Moderent.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { getLogChat, setLogChat, unsetLogChat } from "./database.ts";
-import { Context, withRights } from "$utilities";
+import { getLogChannel, setLogChannel, unsetLogChannel } from "./database.ts";
+import { withRights } from "../admin/utilities.ts";
+import { Context } from "$utilities";
 import { Composer, GrammyError } from "grammy";
 import errors from "bot-api-errors" assert { type: "json" };
 
@@ -24,31 +25,33 @@ export const composer = new Composer<Context>();
 const filter = composer.chatType("supergroup");
 const rights = withRights("owner");
 
-filter.command("setlogchat", rights, async (ctx) => {
-  const logChatId = Number(ctx.message?.text.split(/\s/)[1]);
-  if (isNaN(logChatId)) {
-    await ctx.reply("Give me a chat ID.");
+filter.command("setlogchannel", rights, async (ctx) => {
+  const logChannelId = Number(ctx.message?.text.split(/\s/)[1]);
+  if (isNaN(logChannelId)) {
+    await ctx.reply("Give me a channel ID.");
   } else {
-    if (ctx.chat.id == logChatId) {
-      await ctx.reply("The log chat cannot be this chat.");
+    if (ctx.chat.id == logChannelId) {
+      await ctx.reply("The channel ID cannot be this group's ID.");
     } else {
       try {
-        const chat = await ctx.api.getChat(logChatId);
+        const chat = await ctx.api.getChat(logChannelId);
         if (chat.type == "channel") {
           const administrators = await ctx.api.getChatAdministrators(
-            logChatId,
+            logChannelId,
           );
           if (
             ctx.from &&
             administrators.map((v) => v.user.id).includes(ctx.from.id)
           ) {
-            await setLogChat(ctx.chat.id, logChatId);
-            await ctx.reply("Log chat updated.");
+            await setLogChannel(ctx.chat.id, logChannelId);
+            await ctx.reply("Log channel updated.");
           } else {
-            await ctx.reply("You are not an administrator of that channel.");
+            await ctx.reply(
+              "You are not an administrator of the provided channel.",
+            );
           }
         } else {
-          await ctx.reply("The provided chat is not a channel.");
+          await ctx.reply("The ID is not a channel ID.");
         }
       } catch (err) {
         if (
@@ -60,7 +63,7 @@ filter.command("setlogchat", rights, async (ctx) => {
             errors.ChatNotFound,
           ].includes(err.description)
         ) {
-          await ctx.reply("I can't reach this chat.");
+          await ctx.reply("I can't reach this channel.");
         } else {
           throw err;
         }
@@ -69,14 +72,18 @@ filter.command("setlogchat", rights, async (ctx) => {
   }
 });
 
-filter.command("logchat", rights, async (ctx) => {
-  const logChatId = await getLogChat(ctx.chat.id);
+filter.command("logchannel", rights, async (ctx) => {
+  const logChannelId = await getLogChannel(ctx.chat.id);
   await ctx.reply(
-    logChatId ? "No log chat is set." : `The log chat is ${logChatId}.`,
+    logChannelId
+      ? "No log channel is set."
+      : `The log channel is ${logChannelId}.`,
   );
 });
 
-filter.command("unsetlogchat", rights, async (ctx) => {
-  const unset = await unsetLogChat(ctx.chat.id);
-  await ctx.reply(unset ? "Removed the log chat." : "No log chat is set.");
+filter.command("unsetlogchannel", rights, async (ctx) => {
+  const unset = await unsetLogChannel(ctx.chat.id);
+  await ctx.reply(
+    unset ? "The log channel was removed." : "No log chat is set.",
+  );
 });
