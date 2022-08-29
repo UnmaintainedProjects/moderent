@@ -32,7 +32,9 @@ export async function load() {
       if (initialize) {
         await initialize();
       }
-      composer.use(composer_);
+      if (composer_) {
+        composer.use(composer_);
+      }
     }
   }
   return composer;
