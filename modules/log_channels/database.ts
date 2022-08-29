@@ -15,7 +15,7 @@
  * along with Moderent.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { database } from "$database";
+import { database } from "../mongodb/database.ts";
 import { Collection } from "mongo";
 
 export interface LogChannel {
