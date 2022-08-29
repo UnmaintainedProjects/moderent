@@ -15,8 +15,9 @@
  * along with Moderent.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+import { getRestrictionParameters, withRights } from "./utilities.ts";
 import { logRestrictionEvent } from "../log_chats/logging.ts";
-import { Context, getRestrictionParameters, withRights } from "$utilities";
+import { Context } from "$utilities";
 import { Composer } from "grammy";
 import { fmt, mentionUser } from "grammy_parse_mode";
 

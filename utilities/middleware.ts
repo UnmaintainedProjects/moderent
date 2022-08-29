@@ -15,45 +15,11 @@
  * along with Moderent.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { Context, Session } from "./types.ts";
-import { Middleware, session as session_ } from "grammy";
-import { ChatAdministratorRights } from "grammy/types.ts";
+import { Session } from "./types.ts";
+import { session as session_ } from "grammy";
 
 export const session = session_({
   initial: (): Session => ({
     admins: new Map(),
   }),
 });
-
-export function withRights(
-  requiredRights:
-    | ((keyof ChatAdministratorRights) | "owner")
-    | (((keyof ChatAdministratorRights) | "owner"))[],
-): Middleware<Context> {
-  return async (ctx, next) => {
-    if (ctx.has("message")) {
-      requiredRights = Array.isArray(requiredRights)
-        ? requiredRights
-        : [requiredRights];
-      const rights = ctx.session.admins.get(ctx.from.id);
-      if (
-        rights && ((requiredRights.includes("owner") &&
-          rights.status == "creator") || (rights.status == "creator" || (
-            rights.status == "administrator" &&
-            (requiredRights as (keyof ChatAdministratorRights)[]).every((
-              v,
-            ) => rights[v])
-          )))
-      ) {
-        await next();
-      } else {
-        const text = "Permission denied.";
-        if (ctx.message) {
-          await ctx.reply(text);
-        } else if (ctx.callbackQuery) {
-          await ctx.answerCallbackQuery({ text, show_alert: true });
-        }
-      }
-    }
-  };
-}

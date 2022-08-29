@@ -15,6 +15,5 @@
  * along with Moderent.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-export * from "./arguments.ts";
 export * from "./types.ts";
 export * from "./middleware.ts";

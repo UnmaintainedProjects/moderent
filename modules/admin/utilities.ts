@@ -15,7 +15,9 @@
  * along with Moderent.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { Context } from "grammy";
+import { Context } from "$utilities";
+import { Middleware } from "grammy";
+import { ChatAdministratorRights } from "grammy/types.ts";
 
 const timeExp = /^([1-9])+(h|d)$/;
 
@@ -66,4 +68,37 @@ export function getRestrictionParameters(
     params.reason = text;
   }
   return params;
+}
+
+export function withRights(
+  requiredRights:
+    | ((keyof ChatAdministratorRights) | "owner")
+    | (((keyof ChatAdministratorRights) | "owner"))[],
+): Middleware<Context> {
+  return async (ctx, next) => {
+    if (ctx.has("message")) {
+      requiredRights = Array.isArray(requiredRights)
+        ? requiredRights
+        : [requiredRights];
+      const rights = ctx.session.admins.get(ctx.from.id);
+      if (
+        rights && ((requiredRights.includes("owner") &&
+          rights.status == "creator") || (rights.status == "creator" || (
+            rights.status == "administrator" &&
+            (requiredRights as (keyof ChatAdministratorRights)[]).every((
+              v,
+            ) => rights[v])
+          )))
+      ) {
+        await next();
+      } else {
+        const text = "Permission denied.";
+        if (ctx.message) {
+          await ctx.reply(text);
+        } else if (ctx.callbackQuery) {
+          await ctx.answerCallbackQuery({ text, show_alert: true });
+        }
+      }
+    }
+  };
 }
