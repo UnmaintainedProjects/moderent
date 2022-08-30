@@ -22,5 +22,5 @@ await config({ export: true });
 
 export default cleanEnv(Deno.env.toObject(), {
   BOT_TOKEN: str(),
-  MODULES_PATH: str({ default: "modules/" }),
+  MODULES_PATH: str({ default: "./modules/" }),
 });
