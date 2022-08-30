@@ -16,7 +16,7 @@
  */
 
 import env from "./env.ts";
-import { load } from "./modules/mod.ts";
+import { load } from "./module_loader.ts";
 import workers from "./workers/mod.ts";
 import { Context, session } from "$utilities";
 import { Bot } from "grammy";
@@ -30,7 +30,7 @@ bot.use(hydrateReply);
 bot.use(session);
 bot.use(workers);
 
-const modules = await load();
+const modules = await load(env.MODULES_PATH);
 
 bot.use(modules);
 

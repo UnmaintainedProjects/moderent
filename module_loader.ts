@@ -17,11 +17,10 @@
 
 import { Context } from "$utilities";
 import { Composer } from "grammy";
-import { dirname, fromFileUrl, join } from "path";
+import { join } from "path";
 
-export async function load() {
+export async function load(path: string) {
   const composer = new Composer<Context>();
-  const path = dirname(fromFileUrl(import.meta.url));
   let order = "";
   try {
     order = await Deno.readTextFile(join(path, ".order"));
