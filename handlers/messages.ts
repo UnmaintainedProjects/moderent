@@ -19,13 +19,10 @@ import { Context, withRights } from "$utilities";
 import { Composer } from "grammy";
 
 const composer = new Composer<Context>();
+const filter = composer.chatType("supergroup");
+const rights = withRights("can_pin_messages");
 
-export default composer;
-
-const message = composer.on("message");
-const canPin = withRights("can_pin_messages");
-
-message.command("pin", canPin, async (ctx) => {
+filter.command("pin", rights, async (ctx) => {
   if (!ctx.message?.reply_to_message) {
     await ctx.reply("Reply a message to pin.");
     return;
@@ -34,7 +31,7 @@ message.command("pin", canPin, async (ctx) => {
   await ctx.reply("Pinned.");
 });
 
-message.command("unpin", canPin, async (ctx) => {
+filter.command("unpin", rights, async (ctx) => {
   if (!ctx.message?.reply_to_message) {
     await ctx.reply("Reply a pinned message to unpin.");
     return;
@@ -42,3 +39,5 @@ message.command("unpin", canPin, async (ctx) => {
   await ctx.unpinChatMessage(ctx.message.reply_to_message.message_id);
   await ctx.reply("Unpinned.");
 });
+
+export default composer;

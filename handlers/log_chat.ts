@@ -16,35 +16,69 @@
  */
 
 import { getLogChat, setLogChat, unsetLogChat } from "$database";
-import { Context } from "$utilities";
-import { Composer } from "grammy";
+import { Context, withRights } from "$utilities";
+import { Composer, GrammyError } from "grammy";
+import errors from "bot-api-errors" assert { type: "json" };
 
 const composer = new Composer<Context>();
+const filter = composer.chatType("supergroup");
+const rights = withRights("owner");
 
-export default composer;
-
-composer.command("setlogchat", async (ctx) => {
+filter.command("setlogchat", rights, async (ctx) => {
   const logChatId = Number(ctx.message?.text.split(/\s/)[1]);
   if (isNaN(logChatId)) {
-    await ctx.reply("Give me the log chat's ID.");
-    return;
-  }
-  try {
-    await setLogChat(ctx.chat.id, logChatId);
-    await ctx.reply(`Set the log chat to ${logChatId}.`);
-  } catch (err) {
-    console.log(err);
+    await ctx.reply("Give me a chat ID.");
+  } else {
+    if (ctx.chat.id == logChatId) {
+      await ctx.reply("The log chat cannot be this chat.");
+    } else {
+      try {
+        const chat = await ctx.api.getChat(logChatId);
+        if (chat.type == "channel") {
+          const administrators = await ctx.api.getChatAdministrators(
+            logChatId,
+          );
+          if (
+            ctx.from &&
+            administrators.map((v) => v.user.id).includes(ctx.from.id)
+          ) {
+            await setLogChat(ctx.chat.id, logChatId);
+            await ctx.reply("Log chat updated.");
+          } else {
+            await ctx.reply("You are not an administrator of that channel.");
+          }
+        } else {
+          await ctx.reply("The provided chat is not a channel.");
+        }
+      } catch (err) {
+        if (
+          err instanceof GrammyError &&
+          [
+            errors.BotIsNotAMemberOfTheChannelChat,
+            errors.BotIsNotAMemberOfTheGroupChat,
+            errors.BotIsNotAMemberOfTheSupergroupChat,
+            errors.ChatNotFound,
+          ].includes(err.description)
+        ) {
+          await ctx.reply("I can't reach this chat.");
+        } else {
+          throw err;
+        }
+      }
+    }
   }
 });
 
-composer.command("logchat", async (ctx) => {
+filter.command("logchat", rights, async (ctx) => {
   const logChatId = await getLogChat(ctx.chat.id);
   await ctx.reply(
     logChatId ? "No log chat is set." : `The log chat is ${logChatId}.`,
   );
 });
 
-composer.command("unsetlogchat", async (ctx) => {
+filter.command("unsetlogchat", rights, async (ctx) => {
   const unset = await unsetLogChat(ctx.chat.id);
   await ctx.reply(unset ? "Removed the log chat." : "No log chat is set.");
 });
+
+export default composer;
