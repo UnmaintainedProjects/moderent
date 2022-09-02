@@ -31,7 +31,7 @@ let collection: Collection<Settings & { id: number }>;
 const cache = new Map<number, Settings>();
 
 export function initializeSettings() {
-  collection = database.collection("chats");
+  collection = database.collection("settings");
   collection.createIndexes({
     indexes: [
       {
@@ -61,6 +61,6 @@ export async function updateSettings(id: number, settings: Settings) {
   const result = await collection.updateOne({ id }, { $set: { ...settings } }, {
     upsert: true,
   });
-  cache.set(id, settings);
+  cache.set(id, { ...cache.get(id) ?? {}, ...settings });
   return result.modifiedCount + result.upsertedCount != 0;
 }

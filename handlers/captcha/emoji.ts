@@ -21,6 +21,7 @@ import {
   base64EncryptAesCbcWithIv,
   Context,
 } from "$utilities";
+import { deleteCaptchaState } from "$database";
 import {
   CallbackQueryContext,
   Composer,
@@ -64,11 +65,14 @@ composer.callbackQuery(/^emoji-captcha:([^:]+):/, async (ctx) => {
   if ([EMOJI_CORRECT, EMOJI_WRONG].includes(emoji)) {
     return;
   }
+  let deleteState = false;
   const chatId = Number(
     (ctx.msg?.reply_to_message?.reply_markup
       ?.inline_keyboard[0][0] as InlineKeyboardButton.CallbackButton)
       .callback_data,
   );
+  // ./mod.ts:78
+  const chatName = ctx.msg?.reply_to_message?.text!.slice(47).slice(0, -1);
   const buttons = ctx.msg?.reply_markup
     ?.inline_keyboard as InlineKeyboardButton.CallbackButton[][];
   const correctEmojis = (await base64DecryptAesCbcWithIv(
@@ -91,14 +95,11 @@ composer.callbackQuery(/^emoji-captcha:([^:]+):/, async (ctx) => {
     });
     if (previousCorrectAttempts == 5) {
       await ctx.deleteMessage();
-      await ctx.api.approveChatJoinRequest(chatId, ctx.chat?.id!);
+      deleteState = await ctx.api.approveChatJoinRequest(chatId, ctx.chat!.id);
       await ctx.api.editMessageText(
-        ctx.chat?.id!,
-        ctx.msg?.reply_to_message?.message_id!,
-        "Your request to join " +
-          // see ./mod.ts:57
-          ctx.msg?.reply_to_message?.text!.slice(47).slice(0, -1) +
-          " was accepted.",
+        ctx.chat!.id,
+        ctx.msg!.reply_to_message!.message_id,
+        `Your request to join ${chatName} was approved.`,
       );
     }
   } else {
@@ -109,12 +110,16 @@ composer.callbackQuery(/^emoji-captcha:([^:]+):/, async (ctx) => {
     });
     if (previousWrongAttempts == 2) {
       await ctx.deleteMessage();
+      deleteState = await ctx.api.declineChatJoinRequest(chatId, ctx.chat!.id);
       await ctx.api.editMessageText(
-        ctx.chat?.id!,
-        ctx.msg?.reply_to_message?.message_id!,
-        "You couldn't make it. Try again later.",
+        ctx.chat!.id,
+        ctx.msg!.reply_to_message!.message_id,
+        `Your request to join ${chatName} was declined.`,
       );
     }
+  }
+  if (deleteState) {
+    await deleteCaptchaState(ctx.chat!.id, chatId);
   }
 });
 

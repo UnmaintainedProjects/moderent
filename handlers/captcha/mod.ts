@@ -18,13 +18,19 @@
 import emojic, { emoji } from "./emoji.ts";
 import { Context, withRights } from "$utilities";
 import {
+  Captcha,
+  getCaptchaState,
+  getSettings,
+  updateCaptchaState,
+  updateSettings,
+} from "$database";
+import {
   CallbackQueryContext,
   Composer,
   InlineKeyboard,
   MiddlewareFn,
 } from "grammy";
 import { code, fmt } from "grammy_parse_mode";
-import { Captcha, getSettings, updateSettings } from "$database";
 
 const composer = new Composer<Context>();
 const filter = composer.chatType("supergroup");
@@ -37,31 +43,49 @@ const captchaHandlers: Record<
 composer.use(emojic);
 
 composer.callbackQuery(/^captcha:([^:]+):([^:]+)$/, async (ctx, next) => {
+  await ctx.answerCallbackQuery();
   const type = ctx.match![1];
   const chatId = ctx.match![2];
-  await captchaHandlers[type](ctx, next);
-  await ctx.editMessageReplyMarkup({
-    reply_markup: new InlineKeyboard().text(
-      "Start",
-      chatId,
-    ),
-  });
+  const state = await getCaptchaState(ctx.chat!.id, Number(chatId));
+  if (state) {
+    await captchaHandlers[type](ctx, next);
+    await ctx.editMessageReplyMarkup({
+      reply_markup: new InlineKeyboard().text(
+        "Start",
+        chatId,
+      ),
+    });
+  } else {
+    await ctx.deleteMessage();
+  }
 });
 
 filter.on("chat_join_request", async (ctx) => {
   const { captcha } = await getSettings(ctx.chat.id);
   if (captcha) {
-    await ctx.api.sendMessage(
-      ctx.from.id,
-      // this text is bound to the slice in ./emoji.ts:100
-      `You should solve a CAPTCHA before you can join ${ctx.chat.title}.`,
+    const state = await getCaptchaState(ctx.from.id, ctx.chat.id) ??
       {
-        reply_markup: new InlineKeyboard().text(
-          "Start",
-          `captcha:${captcha}:${ctx.chat.id}`,
-        ),
-      },
-    );
+        negotiated: false,
+        joinRequest: new Date(ctx.chatJoinRequest.date * 1000),
+      };
+    if (
+      !state.negotiated ||
+      Date.now() - state.joinRequest.getTime() > 5 * 60 * 1000
+    ) {
+      await ctx.api.sendMessage(
+        ctx.from.id,
+        // this text is bound to the slice in ./emoji.ts:73
+        `You should solve a CAPTCHA before you can join ${ctx.chat.title}.`,
+        {
+          reply_markup: new InlineKeyboard().text(
+            "Start",
+            `captcha:${captcha}:${ctx.chat.id}`,
+          ),
+        },
+      );
+      state.negotiated = true;
+      await updateCaptchaState(ctx.from.id, ctx.chat.id, state);
+    }
   }
 });
 
