@@ -16,11 +16,14 @@
  */
 
 import { config } from "dotenv";
-import { cleanEnv, str, url } from "envalid";
+import { bool, cleanEnv, host, port, str, url } from "envalid";
 
 await config({ export: true });
 
 export default cleanEnv(Deno.env.toObject(), {
+  USE_WEBHOOK: bool({ default: false }),
+  WEBHOOK_HOST: host({ default: "127.0.0.1" }),
+  WEBHOOK_PORT: port({ default: 3000 }),
   BOT_TOKEN: str(),
   MONGODB_URI: url(),
   EMOJI_CAPTCHA_API_URL: url({ default: "" }),
