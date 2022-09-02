@@ -60,7 +60,7 @@ const replaceEmoji = (
 
 composer.callbackQuery(/^emoji-captcha:([^:]+):/, async (ctx) => {
   await ctx.answerCallbackQuery();
-  const emoji = ctx.match![0];
+  const emoji = ctx.match![1];
   if ([EMOJI_CORRECT, EMOJI_WRONG].includes(emoji)) {
     return;
   }
@@ -132,7 +132,6 @@ export async function emoji(
   let encrypted = await base64EncryptAesCbcWithIv(correctEmojis.join(";"));
   const keyboard = new InlineKeyboard();
   for (const [i, emoji] of emojis.entries()) {
-    const emoji = emojis[i];
     let data = `emoji-captcha:${emoji}:`;
     const available = 64 - new TextEncoder().encode(data).length;
     data += encrypted.slice(0, available);

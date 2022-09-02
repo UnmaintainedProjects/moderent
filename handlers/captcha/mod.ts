@@ -16,17 +16,19 @@
  */
 
 import emojic, { emoji } from "./emoji.ts";
-import { Context } from "$utilities";
+import { Context, withRights } from "$utilities";
 import {
   CallbackQueryContext,
   Composer,
   InlineKeyboard,
   MiddlewareFn,
 } from "grammy";
-import { getSettings } from "$database";
+import { code, fmt } from "grammy_parse_mode";
+import { Captcha, getSettings, updateSettings } from "$database";
 
 const composer = new Composer<Context>();
 const filter = composer.chatType("supergroup");
+const rights = withRights(["can_change_info", "can_invite_users"]);
 const captchaHandlers: Record<
   string,
   MiddlewareFn<CallbackQueryContext<Context>>
@@ -35,15 +37,15 @@ const captchaHandlers: Record<
 composer.use(emojic);
 
 composer.callbackQuery(/^captcha:([^:]+):([^:]+)$/, async (ctx, next) => {
-  const type = ctx.match![0];
-  const chatId = ctx.match![1];
+  const type = ctx.match![1];
+  const chatId = ctx.match![2];
+  await captchaHandlers[type](ctx, next);
   await ctx.editMessageReplyMarkup({
     reply_markup: new InlineKeyboard().text(
       "Start",
       chatId,
     ),
   });
-  await captchaHandlers[type](ctx, next);
 });
 
 filter.on("chat_join_request", async (ctx) => {
@@ -61,5 +63,48 @@ filter.on("chat_join_request", async (ctx) => {
     );
   }
 });
+
+filter.command("captcha", async (ctx) => {
+  const { captcha } = await getSettings(ctx.chat.id);
+  await ctx.reply(
+    captcha ? `CAPTCHA is set to ${captcha}.` : "CAPTCHA is disabled.",
+  );
+});
+
+filter.command("setcaptcha", rights, async (ctx) => {
+  const type = ctx.message.text.split(/\s/)[1];
+  if (!type) {
+    await ctx.reply(
+      'Pass one of the /available_captcha_types or "off" to disable.',
+    );
+    return;
+  }
+  if (![...Object.values(Captcha), "off"].includes(type)) {
+    await ctx.reply(`Unknown CAPTCHA type "${type}".`);
+    return;
+  }
+  const result = await updateSettings(ctx.chat.id, {
+    captcha: type == "off" ? null : type as Captcha,
+  });
+  await ctx.reply(
+    result
+      ? type == "off" ? "CAPTCHA disabled." : `CAPTCHA set to ${type}.`
+      : type == "off"
+      ? "CAPTCHA is already disabled."
+      : `CAPTCHA is already set to ${type}.`,
+  );
+});
+
+filter.command(
+  "available_captcha_types",
+  (ctx) => {
+    const types = Object.values(Captcha);
+    ctx.replyFmt(
+      fmt`Available CAPTCHA types:\n- ${
+        fmt(["", ...types.map(() => ["", "\n-"]).flat()], ...types.map(code))
+      }`,
+    );
+  },
+);
 
 export default composer;

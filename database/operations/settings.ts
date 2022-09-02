@@ -58,7 +58,9 @@ export async function getSettings(id: number): Promise<Settings> {
 }
 
 export async function updateSettings(id: number, settings: Settings) {
-  const result = await collection.updateOne({ id }, { $set: { ...settings } });
+  const result = await collection.updateOne({ id }, { $set: { ...settings } }, {
+    upsert: true,
+  });
   cache.set(id, settings);
-  return result.modifiedCount != 0;
+  return result.modifiedCount + result.upsertedCount != 0;
 }
