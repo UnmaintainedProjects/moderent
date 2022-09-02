@@ -131,17 +131,16 @@ export async function emoji(
   }
   let encrypted = await base64EncryptAesCbcWithIv(correctEmojis.join(";"));
   const keyboard = new InlineKeyboard();
-  for (let i = 0; i < emojis.length; i += BUTTONS_PER_ROW) {
-    for (
-      const emoji of emojis.slice(i, i + BUTTONS_PER_ROW)
-    ) {
-      let data = `emoji-captcha:${emoji}:`;
-      const available = 64 - new TextEncoder().encode(data).length;
-      data += encrypted.slice(0, available);
-      encrypted = encrypted.slice(available);
-      keyboard.text(emoji, data);
+  for (const [i, emoji] of emojis.entries()) {
+    const emoji = emojis[i];
+    let data = `emoji-captcha:${emoji}:`;
+    const available = 64 - new TextEncoder().encode(data).length;
+    data += encrypted.slice(0, available);
+    encrypted = encrypted.slice(available);
+    keyboard.text(emoji, data);
+    if (i % BUTTONS_PER_ROW === (BUTTONS_PER_ROW - 1)) {
+      keyboard.row();
     }
-    keyboard.row();
   }
   await ctx.replyWithPhoto(new InputFile(new Blob([await res.arrayBuffer()])), {
     caption: "What emojis do you see in the photo?",
