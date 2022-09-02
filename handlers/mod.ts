@@ -17,7 +17,7 @@
 
 import logChat from "./log_chat.ts";
 import messages from "./messages.ts";
-import captcha from "./captcha.ts";
+import captcha from "./captcha/mod.ts";
 import restrictions from "./restrictions.ts";
 import { Context } from "$utilities";
 import { Composer } from "grammy";

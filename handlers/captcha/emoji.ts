@@ -26,7 +26,6 @@ import {
 import { InlineKeyboardButton } from "grammy/types.ts";
 
 const composer = new Composer<Context>();
-const filter = composer.chatType("supergroup");
 
 const BUTTONS_PER_ROW = 5;
 const EMOJI_CORRECT = "✅";
@@ -89,12 +88,12 @@ composer.callbackQuery(/^emoji-captcha:([^:]+):/, async (ctx) => {
     });
     if (attempts == 6) {
       await ctx.deleteMessage();
+      await ctx.api.approveChatJoinRequest(chatId, ctx.chat?.id!);
       await ctx.api.editMessageText(
         ctx.chat?.id!,
         ctx.msg?.reply_to_message?.message_id!,
         "You're now in!",
       );
-      await ctx.api.approveChatJoinRequest(chatId, ctx.chat?.id!);
     }
   } else {
     await ctx.editMessageReplyMarkup({
@@ -113,7 +112,7 @@ composer.callbackQuery(/^emoji-captcha:([^:]+):/, async (ctx) => {
   }
 });
 
-async function emojiCaptcha(
+export async function emoji(
   ctx: CallbackQueryContext<Context>,
 ) {
   const url = env.EMOJI_CAPTCHA_API_URL;
@@ -145,28 +144,5 @@ async function emojiCaptcha(
     reply_markup: keyboard,
   });
 }
-
-composer.callbackQuery(/^captcha:/, async (ctx) => {
-  await ctx.editMessageReplyMarkup({
-    reply_markup: new InlineKeyboard().text(
-      "Start",
-      ctx.callbackQuery.data.split(":")[1],
-    ),
-  });
-  return emojiCaptcha(ctx);
-});
-
-filter.on("chat_join_request", async (ctx) => {
-  await ctx.api.sendMessage(
-    ctx.from.id,
-    `Hi ${ctx.from.first_name}, you should solve a captcha to be accepted in ${ctx.chat.title}.`,
-    {
-      reply_markup: new InlineKeyboard().text(
-        "Start",
-        `captcha:${ctx.chat.id}`,
-      ),
-    },
-  );
-});
 
 export default composer;

@@ -19,7 +19,6 @@ import { database } from "../database.ts";
 import { Collection } from "mongo";
 
 export enum Captcha {
-  Disabled = "disabled",
   Emoji = "emoji",
 }
 
