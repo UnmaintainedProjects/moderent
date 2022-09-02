@@ -75,12 +75,11 @@ composer.callbackQuery(/^emoji-captcha:([^:]+):/, async (ctx) => {
     buttons.flat().map((v) => v.callback_data.split(":")[2] ?? "").join(""),
   ))
     .split(";");
-  const attempts = buttons.flat().filter((v) =>
-    [EMOJI_CORRECT, EMOJI_WRONG].includes(v.text)
-  ).length + 1;
-  const previousWrongAttempts = buttons.flat().filter((v) =>
-    v.text == EMOJI_WRONG
+  const previousCorrectAttempts = buttons.flat().filter((v) =>
+    v.text == EMOJI_CORRECT
   ).length;
+  const previousWrongAttempts =
+    buttons.flat().filter((v) => v.text == EMOJI_WRONG).length;
   if (emoji == EMOJI_WRONG || emoji == EMOJI_CORRECT) {
     return;
   }
@@ -90,7 +89,7 @@ composer.callbackQuery(/^emoji-captcha:([^:]+):/, async (ctx) => {
         inline_keyboard: replaceEmoji(buttons, emoji, EMOJI_CORRECT),
       },
     });
-    if (attempts == 6) {
+    if (previousCorrectAttempts == 5) {
       await ctx.deleteMessage();
       await ctx.api.approveChatJoinRequest(chatId, ctx.chat?.id!);
       await ctx.api.editMessageText(
