@@ -20,8 +20,9 @@ import { connect } from "./database/mod.ts";
 import workers from "./workers/mod.ts";
 import handlers from "./handlers/mod.ts";
 import { Context, session } from "./utilities/mod.ts";
-import { Bot } from "grammy";
+import { Bot, webhookCallback } from "grammy";
 import { hydrateReply } from "grammy_parse_mode";
+import { serve } from "std/http/server.ts";
 
 const bot = new Bot<Context>(env.BOT_TOKEN);
 
@@ -32,7 +33,16 @@ bot.use(handlers);
 
 await connect();
 
-bot.start({
-  drop_pending_updates: true,
-  allowed_updates: ["message", "callback_query", "chat_member"],
-});
+if (env.USE_WEBHOOK) {
+  const handleUpdate = webhookCallback(bot, "std/http");
+  serve((request) => {
+    if (new URL(request.url).pathname == `/${bot.token}`) {
+      return handleUpdate(request);
+    }
+  }, { hostname: env.WEBHOOK_HOST, port: env.WEBHOOK_PORT });
+} else {
+  bot.start({
+    drop_pending_updates: true,
+    allowed_updates: ["message", "callback_query", "chat_member"],
+  });
+}
