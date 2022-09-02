@@ -34,5 +34,5 @@ await connect();
 
 bot.start({
   drop_pending_updates: true,
-  allowed_updates: ["message", "callback_query", "chat_member"],
+  allowed_updates: ["message", "callback_query", "chat_member", "chat_join_request"],
 });

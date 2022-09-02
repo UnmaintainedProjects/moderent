@@ -17,6 +17,7 @@
 
 import logChat from "./log_chat.ts";
 import messages from "./messages.ts";
+import captcha from "./captcha.ts";
 import restrictions from "./restrictions.ts";
 import { Context } from "$utilities";
 import { Composer } from "grammy";
@@ -28,5 +29,6 @@ export default composer;
 
 composer.use(autoQuote);
 composer.use(messages);
+composer.use(captcha);
 composer.use(restrictions);
 composer.use(logChat);

@@ -23,7 +23,9 @@ const composer = new Composer<Context>();
 
 export default composer;
 
-composer.use(async (ctx, next) => {
+const filter = composer.chatType('supergroup')
+
+filter.use(async (ctx, next) => {
   if (ctx.session.admins.size == 0) {
     (await ctx.getChatAdministrators()).filter((
       v,
@@ -34,7 +36,7 @@ composer.use(async (ctx, next) => {
   await next();
 });
 
-composer.on("chat_member", (ctx) => {
+filter.on("chat_member", (ctx) => {
   const member = ctx.chatMember.new_chat_member;
   const { id } = member.user;
   if (member.status == "creator" || member.status == "administrator") {
