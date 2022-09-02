@@ -9,6 +9,7 @@
     "grammy_parse_mode": "https://deno.land/x/grammy_parse_mode@1.4.0/mod.ts",
     "mongo": "https://deno.land/x/mongo@v0.31.0/mod.ts",
     "std/": "https://deno.land/std@0.154.0/",
+    "$env": "./env.ts",
     "$database": "./database/mod.ts",
     "$deps": "./deps.ts",
     "$utilities": "./utilities/mod.ts"

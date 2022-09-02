@@ -15,7 +15,7 @@
  * along with Moderent.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { getLogChat, setLogChat, unsetLogChat } from "$database";
+import { getSettings, updateSettings } from "$database";
 import { Context, withRights } from "$utilities";
 import { Composer, GrammyError } from "grammy";
 import errors from "bot-api-errors" assert { type: "json" };
@@ -25,24 +25,24 @@ const filter = composer.chatType("supergroup");
 const rights = withRights("owner");
 
 filter.command("setlogchat", rights, async (ctx) => {
-  const logChatId = Number(ctx.message?.text.split(/\s/)[1]);
-  if (isNaN(logChatId)) {
+  const logChat = Number(ctx.message?.text.split(/\s/)[1]);
+  if (isNaN(logChat)) {
     await ctx.reply("Give me a chat ID.");
   } else {
-    if (ctx.chat.id == logChatId) {
+    if (ctx.chat.id == logChat) {
       await ctx.reply("The log chat cannot be this chat.");
     } else {
       try {
-        const chat = await ctx.api.getChat(logChatId);
+        const chat = await ctx.api.getChat(logChat);
         if (chat.type == "channel") {
           const administrators = await ctx.api.getChatAdministrators(
-            logChatId,
+            logChat,
           );
           if (
             ctx.from &&
             administrators.map((v) => v.user.id).includes(ctx.from.id)
           ) {
-            await setLogChat(ctx.chat.id, logChatId);
+            await updateSettings(ctx.chat.id, { logChat });
             await ctx.reply("Log chat updated.");
           } else {
             await ctx.reply("You are not an administrator of that channel.");
@@ -70,14 +70,14 @@ filter.command("setlogchat", rights, async (ctx) => {
 });
 
 filter.command("logchat", rights, async (ctx) => {
-  const logChatId = await getLogChat(ctx.chat.id);
+  const { logChat } = await getSettings(ctx.chat.id);
   await ctx.reply(
-    logChatId ? "No log chat is set." : `The log chat is ${logChatId}.`,
+    logChat ? "No log chat is set." : `The log chat is ${logChat}.`,
   );
 });
 
 filter.command("unsetlogchat", rights, async (ctx) => {
-  const unset = await unsetLogChat(ctx.chat.id);
+  const unset = await updateSettings(ctx.chat.id, { logChat: null });
   await ctx.reply(unset ? "Removed the log chat." : "No log chat is set.");
 });
 

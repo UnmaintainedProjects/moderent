@@ -16,7 +16,7 @@
  */
 
 import { Context } from "./types.ts";
-import { getLogChat } from "$database";
+import { getSettings } from "$database";
 import { ChatTypeContext } from "grammy";
 import { User } from "grammy/types.ts";
 import { fmt, FormattedString, mentionUser } from "grammy_parse_mode";
@@ -25,7 +25,7 @@ type LogContext = ChatTypeContext<Context, "group" | "supergroup">;
 
 export function log(ctx: LogContext, text: FormattedString) {
   Promise.resolve().then(async () => {
-    const logChat = await getLogChat(ctx.chat.id);
+    const { logChat } = await getSettings(ctx.chat.id);
     if (logChat) {
       await ctx.api.sendMessage(logChat, text.toString(), {
         entities: text.entities,

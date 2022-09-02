@@ -15,11 +15,11 @@
  * along with Moderent.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import env from "./env.ts";
-import { connect } from "./database/mod.ts";
+import env from "$env";
+import { connect } from "$database";
 import workers from "./workers/mod.ts";
 import handlers from "./handlers/mod.ts";
-import { Context, session } from "./utilities/mod.ts";
+import { Context, initialize, session } from "$utilities";
 import { Bot, webhookCallback } from "grammy";
 import { hydrateReply } from "grammy_parse_mode";
 import { serve } from "std/http/server.ts";
@@ -32,6 +32,7 @@ bot.use(workers);
 bot.use(handlers);
 
 await connect();
+await initialize();
 
 if (env.USE_WEBHOOK) {
   const handleUpdate = webhookCallback(bot, "std/http");
@@ -43,6 +44,11 @@ if (env.USE_WEBHOOK) {
 } else {
   bot.start({
     drop_pending_updates: true,
-    allowed_updates: ["message", "callback_query", "chat_member"],
+    allowed_updates: [
+      "message",
+      "callback_query",
+      "chat_member",
+      "chat_join_request",
+    ],
   });
 }
