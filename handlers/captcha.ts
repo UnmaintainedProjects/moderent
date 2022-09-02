@@ -15,6 +15,7 @@
  * along with Moderent.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+import env from "$env";
 import { Context, decrypt, encrypt } from "$utilities";
 import {
   CallbackQueryContext,
@@ -115,7 +116,11 @@ composer.callbackQuery(/^emoji-captcha:([^:]+):/, async (ctx) => {
 async function emojiCaptcha(
   ctx: CallbackQueryContext<Context>,
 ) {
-  const res = await fetch("REPLACE_WITH_ENV_VAR");
+  const url = env.EMOJI_CAPTCHA_API_URL;
+  if (!url) {
+    return;
+  }
+  const res = await fetch(url);
   const emojis = getEmojis(res.headers.get("x-emojis") ?? "");
   const correctEmojis = getEmojis(res.headers.get("x-correct-emojis") ?? "");
   if (emojis.length == 0 || correctEmojis.length == 0) {

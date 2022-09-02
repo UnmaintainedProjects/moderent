@@ -15,11 +15,11 @@
  * along with Moderent.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import env from "./env.ts";
-import { connect } from "./database/mod.ts";
+import env from "$env";
+import { connect } from "$database";
 import workers from "./workers/mod.ts";
 import handlers from "./handlers/mod.ts";
-import { Context, session } from "./utilities/mod.ts";
+import { Context, session } from "$utilities";
 import { Bot } from "grammy";
 import { hydrateReply } from "grammy_parse_mode";
 

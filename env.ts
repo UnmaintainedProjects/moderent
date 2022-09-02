@@ -16,11 +16,12 @@
  */
 
 import { config } from "dotenv";
-import { cleanEnv, str } from "envalid";
+import { cleanEnv, str, url } from "envalid";
 
 await config({ export: true });
 
 export default cleanEnv(Deno.env.toObject(), {
   BOT_TOKEN: str(),
-  MONGODB_URI: str(),
+  MONGODB_URI: url(),
+  EMOJI_CAPTCHA_API_URL: url({ default: "" }),
 });
