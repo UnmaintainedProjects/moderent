@@ -147,7 +147,6 @@ async function emojiCaptcha(
 }
 
 composer.callbackQuery(/^captcha:/, async (ctx) => {
-  console.log(1);
   await ctx.editMessageReplyMarkup({
     reply_markup: new InlineKeyboard().text(
       "Start",
