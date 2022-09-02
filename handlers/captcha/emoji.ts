@@ -16,7 +16,11 @@
  */
 
 import env from "$env";
-import { Context, decrypt, encrypt } from "$utilities";
+import {
+  base64DecryptAesCbcWithIv,
+  base64EncryptAesCbcWithIv,
+  Context,
+} from "$utilities";
 import {
   CallbackQueryContext,
   Composer,
@@ -67,7 +71,7 @@ composer.callbackQuery(/^emoji-captcha:([^:]+):/, async (ctx) => {
   );
   const buttons = ctx.msg?.reply_markup
     ?.inline_keyboard as InlineKeyboardButton.CallbackButton[][];
-  const correctEmojis = (await decrypt(
+  const correctEmojis = (await base64DecryptAesCbcWithIv(
     buttons.flat().map((v) => v.callback_data.split(":")[2] ?? "").join(""),
   ))
     .split(";");
@@ -125,7 +129,7 @@ export async function emoji(
   if (emojis.length == 0 || correctEmojis.length == 0) {
     return;
   }
-  let encrypted = await encrypt(correctEmojis.join(";"));
+  let encrypted = await base64EncryptAesCbcWithIv(correctEmojis.join(";"));
   const keyboard = new InlineKeyboard();
   for (let i = 0; i < emojis.length; i += BUTTONS_PER_ROW) {
     for (
