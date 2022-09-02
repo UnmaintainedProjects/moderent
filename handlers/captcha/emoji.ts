@@ -145,7 +145,7 @@ export async function emoji(
     }
   }
   await ctx.replyWithPhoto(new InputFile(new Blob([await res.arrayBuffer()])), {
-    caption: "What emojis do you see in the photo?",
+    caption: "Which emojis do you see in the photo?",
     reply_markup: keyboard,
   });
 }
