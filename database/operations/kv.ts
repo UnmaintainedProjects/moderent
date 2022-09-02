@@ -18,10 +18,10 @@
 import { database } from "../database.ts";
 import { Collection } from "mongo";
 
-export interface Kv {
+// deno-lint-ignore no-explicit-any
+export interface Kv<T = any> {
   key: string;
-  // deno-lint-ignore no-explicit-any
-  value: any;
+  value: T;
 }
 
 let collection: Collection<Kv>;
