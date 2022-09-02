@@ -1,36 +1,33 @@
 import { get, set } from "$database";
 
-let aesCbckey: CryptoKey;
+let aesCbcKey: CryptoKey;
 
-async function getAesCbcKey() {
-  if (!aesCbckey) {
-    try {
-      aesCbckey = await crypto.subtle.importKey(
-        "jwk",
-        await get("aesCbcKey"),
-        {
-          name: "AES-CBC",
-          length: 256,
-        },
-        true,
-        ["encrypt", "decrypt"],
-      );
-    } catch (_err) {
-      aesCbckey = await crypto.subtle.generateKey(
-        {
-          name: "AES-CBC",
-          length: 256,
-        },
-        true,
-        ["encrypt", "decrypt"],
-      );
-      await set(
-        "aesCbcKey",
-        await crypto.subtle.exportKey("jwk", aesCbckey),
-      );
-    }
+export async function initializeCrypto() {
+  try {
+    aesCbcKey = await crypto.subtle.importKey(
+      "jwk",
+      await get("aesCbcKey"),
+      {
+        name: "AES-CBC",
+        length: 256,
+      },
+      true,
+      ["encrypt", "decrypt"],
+    );
+  } catch (_err) {
+    aesCbcKey = await crypto.subtle.generateKey(
+      {
+        name: "AES-CBC",
+        length: 256,
+      },
+      true,
+      ["encrypt", "decrypt"],
+    );
+    await set(
+      "aesCbcKey",
+      await crypto.subtle.exportKey("jwk", aesCbcKey),
+    );
   }
-  return aesCbckey;
 }
 
 export async function base64EncryptAesCbcWithIv(decrypted: string) {
@@ -38,7 +35,7 @@ export async function base64EncryptAesCbcWithIv(decrypted: string) {
   const encrypted = new Uint8Array(
     await crypto.subtle.encrypt(
       { name: "AES-CBC", iv },
-      await getAesCbcKey(),
+      aesCbcKey,
       new TextEncoder().encode(decrypted),
     ),
   );
@@ -54,7 +51,7 @@ export async function base64DecryptAesCbcWithIv(encrypted: string) {
   buffer = buffer.slice(0, -16);
   const decrypted = await crypto.subtle.decrypt(
     { name: "AES-CBC", iv },
-    await getAesCbcKey(),
+    aesCbcKey,
     buffer,
   );
   return new TextDecoder().decode(decrypted);

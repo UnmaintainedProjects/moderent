@@ -15,6 +15,12 @@
  * along with Moderent.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+import { initializeCrypto } from "./crypto.ts";
+
+export function initialize() {
+  return Promise.all([initializeCrypto()]);
+}
+
 export * from "./arguments.ts";
 export * from "./crypto.ts";
 export * from "./types.ts";

@@ -19,7 +19,7 @@ import env from "$env";
 import { connect } from "$database";
 import workers from "./workers/mod.ts";
 import handlers from "./handlers/mod.ts";
-import { Context, session } from "$utilities";
+import { Context, initialize, session } from "$utilities";
 import { Bot } from "grammy";
 import { hydrateReply } from "grammy_parse_mode";
 
@@ -31,6 +31,7 @@ bot.use(workers);
 bot.use(handlers);
 
 await connect();
+await initialize();
 
 bot.start({
   drop_pending_updates: true,
