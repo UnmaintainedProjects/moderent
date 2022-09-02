@@ -3,10 +3,11 @@ import { get, set } from "$database";
 let aesCbcKey: CryptoKey;
 
 export async function initializeCrypto() {
-  try {
+  const aesCbcKeyData = (await get<JsonWebKey>("aesCbcKey"));
+  if (aesCbcKeyData) {
     aesCbcKey = await crypto.subtle.importKey(
       "jwk",
-      await get("aesCbcKey"),
+      aesCbcKeyData,
       {
         name: "AES-CBC",
         length: 256,
@@ -14,7 +15,7 @@ export async function initializeCrypto() {
       true,
       ["encrypt", "decrypt"],
     );
-  } catch (_err) {
+  } else {
     aesCbcKey = await crypto.subtle.generateKey(
       {
         name: "AES-CBC",
