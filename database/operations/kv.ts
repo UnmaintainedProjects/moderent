@@ -51,7 +51,7 @@ export async function get(key: string): Promise<any> {
 }
 
 // deno-lint-ignore no-explicit-any
-export async function set(key: string, value: any) {
+export async function set<T = any>(key: string, value: T) {
   const result = await collection.updateOne({ key }, { $set: { value } }, {
     upsert: true,
   });
