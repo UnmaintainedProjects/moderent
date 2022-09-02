@@ -15,8 +15,8 @@
  * along with Moderent.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { config } from "dotenv";
 import { bool, cleanEnv, host, port, str, url } from "envalid";
+import { config } from "std/dotenv/mod.ts";
 
 await config({ export: true });
 

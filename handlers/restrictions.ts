@@ -21,8 +21,8 @@ import {
   logRestrictionEvent,
   withRights,
 } from "$utilities";
-import { Composer } from "grammy";
 import { fmt, mentionUser } from "grammy_parse_mode";
+import { Composer } from "grammy";
 
 const composer = new Composer<Context>();
 const filter = composer.chatType("supergroup");

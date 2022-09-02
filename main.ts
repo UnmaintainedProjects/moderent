@@ -15,13 +15,13 @@
  * along with Moderent.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import env from "$env";
-import { connect } from "$database";
-import workers from "./workers/mod.ts";
 import handlers from "./handlers/mod.ts";
+import workers from "./workers/mod.ts";
 import { Context, initialize, session } from "$utilities";
-import { Bot, webhookCallback } from "grammy";
+import { connect } from "$database";
+import env from "$env";
 import { hydrateReply } from "grammy_parse_mode";
+import { Bot, webhookCallback } from "grammy";
 import { serve } from "std/http/server.ts";
 
 const bot = new Bot<Context>(env.BOT_TOKEN);

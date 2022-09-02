@@ -15,8 +15,8 @@
  * along with Moderent.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { getSettings, updateSettings } from "$database";
 import { Context, withRights } from "$utilities";
+import { getSettings, updateSettings } from "$database";
 import { Composer, GrammyError } from "grammy";
 import errors from "bot-api-errors" assert { type: "json" };
 

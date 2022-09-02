@@ -15,20 +15,20 @@
  * along with Moderent.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import env from "$env";
 import {
   base64DecryptAesCbcWithIv,
   base64EncryptAesCbcWithIv,
   Context,
 } from "$utilities";
 import { deleteCaptchaState } from "$database";
+import env from "$env";
+import { InlineKeyboardButton } from "grammy/types.ts";
 import {
   CallbackQueryContext,
   Composer,
   InlineKeyboard,
   InputFile,
 } from "grammy";
-import { InlineKeyboardButton } from "grammy/types.ts";
 
 const composer = new Composer<Context>();
 
