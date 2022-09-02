@@ -18,8 +18,7 @@
 import { database } from "../database.ts";
 import { Collection } from "mongo";
 
-// deno-lint-ignore no-explicit-any
-export interface Kv<T = any> {
+export interface Kv<T = unknown> {
   key: string;
   value: T;
 }
@@ -41,8 +40,7 @@ export function initializeKv() {
   });
 }
 
-// deno-lint-ignore no-explicit-any
-export async function get<T = any>(key: string): Promise<T | null> {
+export async function get<T = unknown>(key: string): Promise<T | null> {
   let value = cache.get(key);
   if (!value) {
     value = (await collection.findOne({ key }))?.value ?? null;
@@ -50,8 +48,7 @@ export async function get<T = any>(key: string): Promise<T | null> {
   return value;
 }
 
-// deno-lint-ignore no-explicit-any
-export async function set<T = any>(key: string, value: T) {
+export async function set<T = unknown>(key: string, value: T) {
   const result = await collection.updateOne({ key }, { $set: { value } }, {
     upsert: true,
   });
