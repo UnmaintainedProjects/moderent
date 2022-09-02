@@ -67,7 +67,6 @@ composer.callbackQuery(/^emoji-captcha:([^:]+):/, async (ctx) => {
   );
   const buttons = ctx.msg?.reply_markup
     ?.inline_keyboard as InlineKeyboardButton.CallbackButton[][];
-  const thisEmoji = ctx.callbackQuery.data.split(":")[1];
   const correctEmojis = (await decrypt(
     buttons.flat().map((v) => v.callback_data.split(":")[2] ?? "").join(""),
   ))
@@ -78,13 +77,13 @@ composer.callbackQuery(/^emoji-captcha:([^:]+):/, async (ctx) => {
   const previousWrongAttempts = buttons.flat().filter((v) =>
     v.text == EMOJI_WRONG
   ).length;
-  if (thisEmoji == EMOJI_WRONG || thisEmoji == EMOJI_CORRECT) {
+  if (emoji == EMOJI_WRONG || emoji == EMOJI_CORRECT) {
     return;
   }
-  if (correctEmojis.includes(thisEmoji)) {
+  if (correctEmojis.includes(emoji)) {
     await ctx.editMessageReplyMarkup({
       reply_markup: {
-        inline_keyboard: replaceEmoji(buttons, thisEmoji, EMOJI_CORRECT),
+        inline_keyboard: replaceEmoji(buttons, emoji, EMOJI_CORRECT),
       },
     });
     if (attempts == 6) {
@@ -99,7 +98,7 @@ composer.callbackQuery(/^emoji-captcha:([^:]+):/, async (ctx) => {
   } else {
     await ctx.editMessageReplyMarkup({
       reply_markup: {
-        inline_keyboard: replaceEmoji(buttons, thisEmoji, EMOJI_WRONG),
+        inline_keyboard: replaceEmoji(buttons, emoji, EMOJI_WRONG),
       },
     });
     if (previousWrongAttempts == 2) {
