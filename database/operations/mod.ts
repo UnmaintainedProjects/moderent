@@ -16,11 +16,11 @@
  */
 
 import { initializeSettings } from "./settings.ts";
-import {initializeKv} from './kv.ts';
+import { initializeKv } from "./kv.ts";
 
 export function initialize() {
   return Promise.all([initializeSettings(), initializeKv()]);
 }
 
 export * from "./settings.ts";
-export * from './kv.ts';
+export * from "./kv.ts";
