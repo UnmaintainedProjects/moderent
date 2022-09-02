@@ -23,7 +23,7 @@ const composer = new Composer<Context>();
 
 export default composer;
 
-const filter = composer.chatType('supergroup')
+const filter = composer.chatType("supergroup");
 
 filter.use(async (ctx, next) => {
   if (ctx.session.admins.size == 0) {
