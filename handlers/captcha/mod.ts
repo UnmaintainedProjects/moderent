@@ -53,7 +53,8 @@ filter.on("chat_join_request", async (ctx) => {
   if (captcha) {
     await ctx.api.sendMessage(
       ctx.from.id,
-      `Hi ${ctx.from.first_name}, you should solve a captcha to be accepted in ${ctx.chat.title}.`,
+      // this text is bound to the slice in ./emoji.ts:100
+      `You should solve a CAPTCHA before you can join ${ctx.chat.title}.`,
       {
         reply_markup: new InlineKeyboard().text(
           "Start",

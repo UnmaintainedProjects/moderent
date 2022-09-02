@@ -96,7 +96,10 @@ composer.callbackQuery(/^emoji-captcha:([^:]+):/, async (ctx) => {
       await ctx.api.editMessageText(
         ctx.chat?.id!,
         ctx.msg?.reply_to_message?.message_id!,
-        "You're now in!",
+        "Your request to join " +
+          // see ./mod.ts:57
+          ctx.msg?.reply_to_message?.text!.slice(47).slice(0, -1) +
+          " was accepted.",
       );
     }
   } else {
