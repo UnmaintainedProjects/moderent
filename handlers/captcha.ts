@@ -22,7 +22,7 @@ import {
   InlineKeyboard,
   InputFile,
 } from "grammy";
-import { InlineKeyboardButton } from "https://deno.land/x/grammy@v1.10.1/platform.deno.ts";
+import { InlineKeyboardButton } from "grammy/types.ts";
 
 const composer = new Composer<Context>();
 const filter = composer.chatType("supergroup");
