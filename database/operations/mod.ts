@@ -15,10 +15,10 @@
  * along with Moderent.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { initializeLogChats } from "./log_chats.ts";
+import { initializeSettings } from "./settings.ts";
 
 export function initialize() {
-  return Promise.all([initializeLogChats()]);
+  return Promise.all([initializeSettings()]);
 }
 
-export * from "./log_chats.ts";
+export * from "./settings.ts";
