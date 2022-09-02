@@ -35,7 +35,7 @@ const EMOJI_WRONG = "❌";
 const getEmojis = (string: string) =>
   string.split(";").map((v) => v.split("-").map((v) => parseInt(v, 16))).map((
     v,
-  ) => String.fromCodePoint(...v));
+  ) => String.fromCodePoint(...v.filter((v) => !isNaN(v))));
 
 const replaceEmoji = (
   buttons: InlineKeyboardButton.CallbackButton[][],
