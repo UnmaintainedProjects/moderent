@@ -42,7 +42,7 @@ export function initializeKv() {
 }
 
 // deno-lint-ignore no-explicit-any
-export async function get(key: string): Promise<any> {
+export async function get<T = any>(key: string): Promise<T | null> {
   let value = cache.get(key);
   if (!value) {
     value = (await collection.findOne({ key }))?.value ?? null;
