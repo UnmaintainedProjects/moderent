@@ -21,24 +21,7 @@ import { Composer, InlineKeyboard } from "grammy";
 
 const composer = new Composer<Context>();
 const filter = composer.chatType("private");
-
-filter.command(
-  "start",
-  (ctx) =>
-    ctx.replyFmt(
-      fmt`I\u2019m Moderent \u2014 the diff${underline("erent")} way to ${
-        underline("mod")
-      }erate.
-
-Read the /help to learn more or get started right away by adding me to your group.`,
-      {
-        reply_markup: new InlineKeyboard().url(
-          "Add to a group",
-          `https://t.me/${ctx.me.username}?startgroup=add`,
-        ),
-      },
-    ),
-);
+const filter2 = composer.chatType("supergroup");
 
 const helps: Record<string, FormattedString> = {
   "CAPTCHAs": fmt`${bold("CAPTCHAs")}
@@ -143,5 +126,49 @@ filter.command("help", async (ctx) => {
     reply_markup: homeKeyboard,
   });
 });
+
+filter.command(
+  "start",
+  (ctx) =>
+    ctx.msg.text.includes("help")
+      ? ctx.replyFmt(home.text, {
+        entities: home.entities,
+        reply_markup: homeKeyboard,
+      })
+      : ctx.replyFmt(
+        fmt`I\u2019m Moderent \u2014 the diff${underline("erent")} way to ${
+          underline("mod")
+        }erate.
+
+Read the /help to learn more or get started right away by adding me to your group.`,
+        {
+          reply_markup: new InlineKeyboard().url(
+            "Add to a group",
+            `https://t.me/${ctx.me.username}?startgroup=add`,
+          ),
+        },
+      ),
+);
+
+filter2.command(
+  "start",
+  (ctx) =>
+    ctx.reply(
+      ctx.msg.text.includes("add")
+        ? "Thanks for adding me. You can read the /help to learn about my capabilities"
+        : "I\u2019m there!",
+    ),
+);
+
+filter2.command(
+  "help",
+  (ctx) =>
+    ctx.reply("Use the button below read the help in private chat.", {
+      reply_markup: new InlineKeyboard().url(
+        "Help",
+        `https://t.me/${ctx.me.username}?start=help`,
+      ),
+    }),
+);
 
 export default composer;
