@@ -155,7 +155,7 @@ filter2.command(
   (ctx) =>
     ctx.reply(
       ctx.msg.text.includes("add")
-        ? "Thanks for having me here. You can read the /help to learn about my capabilities"
+        ? "Thanks for having me here. You can read the /help to learn about my capabilities."
         : "I\u2019m live!",
     ),
 );
