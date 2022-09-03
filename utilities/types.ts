@@ -15,9 +15,9 @@
  * along with Moderent.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { SessionFlavor } from "grammy";
-import { ChatMemberAdministrator, ChatMemberOwner } from "grammy/types.ts";
 import { ParseModeContext } from "grammy_parse_mode";
+import { ChatMemberAdministrator, ChatMemberOwner } from "grammy/types.ts";
+import { SessionFlavor } from "grammy";
 
 export interface Session {
   admins: Map<number, ChatMemberOwner | ChatMemberAdministrator>;

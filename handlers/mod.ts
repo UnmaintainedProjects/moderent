@@ -15,9 +15,10 @@
  * along with Moderent.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+import captcha from "./captcha/mod.ts";
+import help from "./help.ts";
 import logChat from "./log_chat.ts";
 import messages from "./messages.ts";
-import captcha from "./captcha/mod.ts";
 import restrictions from "./restrictions.ts";
 import { Context } from "$utilities";
 import { Composer } from "grammy";
@@ -27,8 +28,10 @@ const composer = new Composer<Context>();
 
 export default composer;
 
-composer.use(autoQuote);
-composer.use(messages);
+composer.chatType("supergroup").use(autoQuote);
+
 composer.use(captcha);
-composer.use(restrictions);
+composer.use(help);
 composer.use(logChat);
+composer.use(messages);
+composer.use(restrictions);

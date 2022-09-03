@@ -16,8 +16,8 @@
  */
 
 import { Context, Session } from "./types.ts";
-import { Middleware, session as session_ } from "grammy";
 import { ChatAdministratorRights } from "grammy/types.ts";
+import { Middleware, session as session_ } from "grammy";
 
 export const session = session_({
   initial: (): Session => ({

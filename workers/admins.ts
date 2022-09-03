@@ -16,8 +16,8 @@
  */
 
 import { Context } from "$utilities";
-import { Composer } from "grammy";
 import { ChatMemberAdministrator, ChatMemberOwner } from "grammy/types.ts";
+import { Composer } from "grammy";
 
 const composer = new Composer<Context>();
 

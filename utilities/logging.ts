@@ -17,8 +17,8 @@
 
 import { Context } from "./types.ts";
 import { getSettings } from "$database";
-import { ChatTypeContext } from "grammy";
 import { User } from "grammy/types.ts";
+import { ChatTypeContext } from "grammy";
 import { fmt, FormattedString, mentionUser } from "grammy_parse_mode";
 
 type LogContext = ChatTypeContext<Context, "group" | "supergroup">;

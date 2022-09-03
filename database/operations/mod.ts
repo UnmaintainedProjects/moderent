@@ -15,18 +15,18 @@
  * along with Moderent.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { initializeSettings } from "./settings.ts";
-import { initializeKv } from "./kv.ts";
 import { initializeCaptchaStates } from "./captcha_states.ts";
+import { initializeKv } from "./kv.ts";
+import { initializeSettings } from "./settings.ts";
 
 export function initialize() {
   return Promise.all([
-    initializeSettings(),
-    initializeKv(),
     initializeCaptchaStates(),
+    initializeKv(),
+    initializeSettings(),
   ]);
 }
 
-export * from "./settings.ts";
-export * from "./kv.ts";
 export * from "./captcha_states.ts";
+export * from "./kv.ts";
+export * from "./settings.ts";

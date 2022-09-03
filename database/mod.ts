@@ -15,10 +15,10 @@
  * along with Moderent.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { MongoClient } from "mongo";
-import env, {} from "../env.ts";
 import { initialize } from "./operations/mod.ts";
 import { setDatabase } from "./database.ts";
+import env from "$env";
+import { MongoClient } from "mongo";
 
 const client = new MongoClient();
 
