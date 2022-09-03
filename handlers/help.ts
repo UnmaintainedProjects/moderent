@@ -16,7 +16,7 @@
  */
 
 import { Context } from "$utilities";
-import { fmt, FormattedString, underline, bold } from "grammy_parse_mode";
+import { bold, fmt, FormattedString, underline } from "grammy_parse_mode";
 import { Composer, InlineKeyboard } from "grammy";
 
 const composer = new Composer<Context>();
@@ -101,9 +101,9 @@ ${bold("Notes")}
 \u2014 /pin and /unpin require the right to pin messages.`,
 };
 
-const home = fmt`Moderent lets you ${
-  underline("mod")
-}erate your groups diff${underline("erent")}ly. With its diverse capabilities and straightforwardness, you can keep your groups away from undesirable situations.
+const home = fmt`Moderent lets you ${underline("mod")}erate your groups diff${
+  underline("erent")
+}ly. With its diverse capabilities and straightforwardness, you can keep your groups away from undesirable situations.
 
 Use the buttons below to learn more about capabilities.`;
 
