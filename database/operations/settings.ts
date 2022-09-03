@@ -39,11 +39,6 @@ export function initializeSettings() {
         name: "id",
         unique: true,
       },
-      {
-        key: { "logChat": 1 },
-        name: "logChat",
-        unique: true,
-      },
     ],
   });
 }
