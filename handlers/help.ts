@@ -16,9 +16,8 @@
  */
 
 import { Context } from "$utilities";
-import { fmt, FormattedString, underline } from "grammy_parse_mode";
+import { fmt, FormattedString, underline, bold } from "grammy_parse_mode";
 import { Composer, InlineKeyboard } from "grammy";
-import { bold } from "https://deno.land/std@0.149.0/fmt/colors.ts";
 
 const composer = new Composer<Context>();
 const filter = composer.chatType("private");
