@@ -70,11 +70,11 @@ export async function updateCaptchaState(
     ...cache.get(`${userId}${chatId}`) ?? {},
     ...state,
   });
-  return result.modifiedCount + result.upsertedCount != 0;
+  return result.modifiedCount + result.upsertedCount > 0;
 }
 
 export async function deleteCaptchaState(userId: number, chatId: number) {
   const result = await collection.deleteOne({ userId, chatId });
   cache.delete(`${userId}${chatId}`);
-  return result != 0;
+  return result > 0;
 }

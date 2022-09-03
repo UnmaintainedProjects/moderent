@@ -62,5 +62,5 @@ export async function updateSettings(id: number, settings: Settings) {
     upsert: true,
   });
   cache.set(id, { ...cache.get(id) ?? {}, ...settings });
-  return result.modifiedCount + result.upsertedCount != 0;
+  return result.modifiedCount + result.upsertedCount > 0;
 }

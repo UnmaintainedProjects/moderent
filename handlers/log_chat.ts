@@ -60,7 +60,7 @@ filter.command("setlogchat", rights, async (ctx) => {
             errors.ChatNotFound,
           ].includes(err.description)
         ) {
-          await ctx.reply("I can't reach this chat.");
+          await ctx.reply("I can\u2019t reach this chat.");
         } else {
           throw err;
         }

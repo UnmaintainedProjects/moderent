@@ -53,5 +53,5 @@ export async function set<T = unknown>(key: string, value: T) {
     upsert: true,
   });
   cache.set(key, value);
-  return result.modifiedCount + result.upsertedCount != 0;
+  return result.modifiedCount + result.upsertedCount > 0;
 }
