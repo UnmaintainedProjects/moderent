@@ -103,7 +103,7 @@ ${bold("Notes")}
 
 const home = fmt`Moderent lets you ${
   underline("mod")
-}erate your groups diff${"erent"}ly. With its diverse capabilities and straightforwardness, you can keep your groups away from undesirable situations.
+}erate your groups diff${underline("erent")}ly. With its diverse capabilities and straightforwardness, you can keep your groups away from undesirable situations.
 
 Use the buttons below to learn more about capabilities.`;
 
