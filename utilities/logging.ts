@@ -45,9 +45,14 @@ export function logRestrictionEvent(
 ) {
   log(
     ctx,
-    fmt`#${type}\nAdmin: ${mentionUser(admin.first_name, admin.id)}\nTarget: ${
+    fmt`#${type}\nChat: ${ctx.chat.title}\nAdmin: ${
+      mentionUser(admin.first_name, admin.id)
+    }\nTarget: ${
       mentionUser(
-        typeof target === "number" ? target : target.first_name,
+        typeof target === "number" ? target : target.username ??
+            target.first_name + target.last_name
+          ? ` ${target.last_name}`
+          : "",
         typeof target === "number" ? target : target.id,
       )
     }\n${reason ? `Reason: ${reason}` : ""}`,
