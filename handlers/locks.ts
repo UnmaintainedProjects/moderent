@@ -194,40 +194,40 @@ function getLocks(text: string) {
 }
 
 filter.command("lock", rights, async (ctx) => {
-  const locks = getLocks(ctx.message.text);
-  if (locks.length < 0) {
+  const locks_ = getLocks(ctx.message.text);
+  if (locks_.length < 0) {
     return ctx.reply("Pass at least one lock type. See /locktypes.");
   }
-  for (const lock of locks) {
+  for (const lock of locks_) {
     if (!Object.keys(locks).includes(lock)) {
       return ctx.replyFmt(
         fmt`Invalid lock type: ${code(lock)}. See /locktypes.`,
       );
     }
   }
-  const { locks: locks_ = [] } = await getSettings(ctx.chat.id);
+  const { locks: locks__ = [] } = await getSettings(ctx.chat.id);
   const result = await updateSettings(
     ctx.chat.id,
-    { locks: [...new Set([...locks_, ...locks])].sort() },
+    { locks: [...new Set([...locks__, ...locks_])].sort() },
   );
   await ctx.reply(result ? "Lock list updated." : "Lock list not updated.");
 });
 
 filter.command("unlock", async (ctx) => {
-  const locks = getLocks(ctx.message.text);
-  if (locks.length < 0) {
+  const locks_ = getLocks(ctx.message.text);
+  if (locks_.length < 0) {
     return ctx.reply("Pass at least one lock type. See /locktypes.");
   }
-  for (const lock of locks) {
+  for (const lock of locks_) {
     if (!Object.keys(locks).includes(lock)) {
       return ctx.replyFmt(
         fmt`Invalid lock type: ${code(lock)}. See /locktypes.`,
       );
     }
   }
-  let { locks: locks_ = [] } = await getSettings(ctx.chat.id);
-  locks_ = locks_.filter((v) => !locks.includes(v));
-  const result = await updateSettings(ctx.chat.id, { locks: locks_ });
+  let { locks: locks__ = [] } = await getSettings(ctx.chat.id);
+  locks__ = locks__.filter((v) => !locks_.includes(v));
+  const result = await updateSettings(ctx.chat.id, { locks: locks__ });
   await ctx.reply(
     result
       ? "The provided locks were unlocked."
