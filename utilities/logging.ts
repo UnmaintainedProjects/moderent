@@ -41,7 +41,7 @@ export function logRestrictionEvent(
   type: string,
   admin: User,
   target: number | User,
-  reason?: string,
+  params?: { reason?: string; other?: string },
 ) {
   log(
     ctx,
@@ -55,6 +55,8 @@ export function logRestrictionEvent(
           : "",
         typeof target === "number" ? target : target.id,
       )
-    }\n${reason ? `Reason: ${reason}` : ""}`,
+    }${params?.reason ? `\nReason: ${params.reason}` : ""}${
+      params?.other ? `\n${params.other}` : ""
+    }`,
   );
 }
