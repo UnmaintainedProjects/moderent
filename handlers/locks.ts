@@ -204,6 +204,16 @@ filter.command("lock", rights, async (ctx) => {
 
 filter.command("unlock", async (ctx) => {
   const locks = getLocks(ctx.message.text);
+  if (locks.length < 0) {
+    return ctx.reply("Pass at least one lock type. See /locktypes.");
+  }
+  for (const lock of locks) {
+    if (!Object.keys(locks).includes(lock)) {
+      return ctx.replyFmt(
+        fmt`Invalid lock type: ${code(lock)}. See /locktypes.`,
+      );
+    }
+  }
   let { locks: locks_ = [] } = await getSettings(ctx.chat.id);
   locks_ = locks_.filter((v) => !locks.includes(v));
   const result = await updateSettings(ctx.chat.id, { locks: locks_ });
