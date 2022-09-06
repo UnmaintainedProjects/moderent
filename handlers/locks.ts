@@ -192,7 +192,6 @@ function getLocks(text: string) {
     ),
   ];
 }
-
 filter.command("lock", rights, async (ctx) => {
   const locks_ = getLocks(ctx.message.text);
   if (locks_.length < 0) {
@@ -212,7 +211,6 @@ filter.command("lock", rights, async (ctx) => {
   );
   await ctx.reply(result ? "Lock list updated." : "Lock list not updated.");
 });
-
 filter.command("unlock", rights, async (ctx) => {
   const locks_ = getLocks(ctx.message.text);
   if (locks_.length < 0) {
@@ -243,7 +241,7 @@ filter.command("locks", rights, async (ctx) => {
     await ctx.replyFmt(
       fmt`Current locks:\n- ${
         fmt(
-          ["", ...locks.map(() => "\n-").slice(0, -1), ""],
+          ["", ...locks.map(() => "\n- ").slice(0, -1), ""],
           ...locks.map(code),
         )
       }`,

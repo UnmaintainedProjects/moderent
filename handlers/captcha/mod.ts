@@ -127,7 +127,7 @@ filter.command(
     ctx.replyFmt(
       fmt`The available CAPTCHA types are:\n- ${
         fmt(
-          ["", ...types.map(() => "\n-").slice(0, -1), ""],
+          ["", ...types.map(() => "\n- ").slice(0, -1), ""],
           ...types.map(code),
         )
       }`,
