@@ -193,7 +193,7 @@ function getLocks(text: string) {
   ];
 }
 
-filter.command("lock", rights, async (ctx) => {
+filter.command("lock", async (ctx) => {
   const locks_ = getLocks(ctx.message.text);
   if (locks_.length < 0) {
     return ctx.reply("Pass at least one lock type. See /locktypes.");
@@ -213,7 +213,7 @@ filter.command("lock", rights, async (ctx) => {
   await ctx.reply(result ? "Lock list updated." : "Lock list not updated.");
 });
 
-filter.command("unlock", rights, async (ctx) => {
+filter.command("unlock", async (ctx) => {
   const locks_ = getLocks(ctx.message.text);
   if (locks_.length < 0) {
     return ctx.reply("Pass at least one lock type. See /locktypes.");
@@ -236,9 +236,9 @@ filter.command("unlock", rights, async (ctx) => {
 });
 
 filter.command("locks", async (ctx) => {
-  const { locks } = await getSettings(ctx.chat.id);
-  if (!locks) {
-    await ctx.reply("No locks are set.");
+  const { locks = [] } = await getSettings(ctx.chat.id);
+  if (locks.length == 0) {
+    await ctx.reply("Nothing is locked.");
   } else {
     await ctx.replyFmt(
       fmt`Current locks:\n- ${
