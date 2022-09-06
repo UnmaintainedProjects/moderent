@@ -31,9 +31,9 @@ export default composer;
 
 composer.chatType("supergroup").use(autoQuote);
 
+composer.use(locks);
 composer.use(captcha);
 composer.use(help);
 composer.use(logChat);
 composer.use(messages);
 composer.use(restrictions);
-composer.use(locks);

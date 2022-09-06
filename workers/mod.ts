@@ -16,7 +16,6 @@
  */
 
 import admins from "./admins.ts";
-import locks from "./locks.ts";
 import { Context } from "$utilities";
 import { Composer } from "grammy";
 
@@ -25,4 +24,3 @@ const composer = new Composer<Context>();
 export default composer;
 
 composer.use(admins);
-composer.use(locks);
