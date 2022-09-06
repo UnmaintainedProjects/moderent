@@ -126,7 +126,10 @@ filter.command(
     const types = Object.values(Captcha);
     ctx.replyFmt(
       fmt`Available CAPTCHA types:\n- ${
-        fmt(["", ...types.map(() => ["", "\n-"]).flat()], ...types.map(code))
+        fmt(
+          ["", ...types.map(() => "\n-").slice(0, -1), ""],
+          ...types.map(code),
+        )
       }`,
     );
   },

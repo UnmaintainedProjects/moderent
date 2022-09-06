@@ -30,12 +30,13 @@ const lockers: Record<
   (ctx: Context) => Promise<boolean> | boolean
 > = {
   rtl(ctx) {
-    ctx.message?.text ?? "" + ctx.message?.caption ?? "";
-    return false;
+    return /[\u0591-\u07FF\uFB1D-\uFDFD\uFE70-\uFEFC]/.test(
+      ctx.message?.text ?? "" + ctx.message?.caption ?? "",
+    );
   },
 };
 
-filter.use(async (ctx) => {
+filter.use(async (ctx, next) => {
   if (
     !(ctx.from &&
       ctx.session.admins.has(ctx.from.id))
@@ -53,9 +54,10 @@ filter.use(async (ctx) => {
             }
           })()
         ) {
-          await ctx.deleteMessage();
+          return ctx.deleteMessage();
         }
       }
     }
   }
+  await next();
 });

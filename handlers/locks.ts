@@ -82,21 +82,27 @@ const lockTypes = [
   "rtl",
 ];
 
-filter.command("locktypes", (ctx) =>
-  ctx.replyFmt(
-    fmt`Available CAPTCHA types:\n- ${
+filter.command("locktypes", (ctx) => {
+  return ctx.replyFmt(
+    fmt`Available lock types:\n- ${
       fmt(
-        ["", ...lockTypes.map(() => ["", "\n-"]).flat()],
+        ["", ...lockTypes.map(() => "\n- ").slice(0, -1), ""],
         ...lockTypes.map(code),
       )
     }`,
-  ));
+  );
+});
 
 filter.command("setlocks", rights, async (ctx) => {
-  const locks = ctx.message.text
-    .slice(ctx.message.text.split(/\s/)[0].length)
-    .split(/\s/)
-    .map((v) => v.toLowerCase());
+  const locks = [
+    ...new Set(
+      ctx.message.text
+        .slice(ctx.message.text.split(/\s/)[0].length)
+        .split(/\s/)
+        .map((v) => v.trim().toLowerCase())
+        .filter((v) => v),
+    ),
+  ];
   if (locks.length < 0) {
     return ctx.reply("Pass at least one lock type. See /locktypes.");
   }
@@ -124,7 +130,7 @@ filter.command("locks", async (ctx) => {
     await ctx.replyFmt(
       fmt`Current locks:\n- ${
         fmt(
-          ["", ...locks.map(() => ["", "\n-"]).flat()],
+          ["", ...locks.map(() => "\n-").slice(0, -1), ""],
           ...locks.map(code),
         )
       }`,
