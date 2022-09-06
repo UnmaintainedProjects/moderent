@@ -168,7 +168,10 @@ for (const [i, lock] of Object.keys(lockDescriptions).entries()) {
   }
 }
 filter.command("locktypes", (ctx) => {
-  return ctx.reply("The available lock types are:");
+  return ctx.reply(
+    "The available lock types are:",
+    { reply_markup: lockTypesKeyboard },
+  );
 });
 filter.callbackQuery(/^lock_description:([^:]+)$/, (ctx) => {
   return ctx.answerCallbackQuery({
