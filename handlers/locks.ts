@@ -213,7 +213,7 @@ filter.command("lock", rights, async (ctx) => {
   await ctx.reply(result ? "Lock list updated." : "Lock list not updated.");
 });
 
-filter.command("unlock", async (ctx) => {
+filter.command("unlock", rights, async (ctx) => {
   const locks_ = getLocks(ctx.message.text);
   if (locks_.length < 0) {
     return ctx.reply("Pass at least one lock type. See /locktypes.");
