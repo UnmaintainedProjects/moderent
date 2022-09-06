@@ -99,9 +99,10 @@ ${bold("Notes")}
 
 const home = fmt`Moderent lets you ${underline("mod")}erate your groups diff${
   underline("erent")
-}ly. With its diverse capabilities and straightforwardness, you can keep your groups away from undesirable situations.
+}ly.
+With its diverse capabilities and straightforwardness, you can keep your groups away from undesirable situations.
 
-Use the buttons below to learn more about capabilities.`;
+Use the buttons below to learn more about the capabilities.`;
 
 const BUTTONS_PER_ROW = 3;
 const homeKeyboard = new InlineKeyboard();
