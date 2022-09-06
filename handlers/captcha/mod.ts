@@ -97,7 +97,7 @@ filter.command("captcha", async (ctx) => {
 });
 
 filter.command("setcaptcha", rights, async (ctx) => {
-  const type = ctx.message.text.split(/\s/)[1];
+  const type = ctx.msg.text.split(/\s/)[1];
   if (!type) {
     await ctx.reply(
       "Pass one of the /captchatypes or \u201Coff\u201D to disable.",

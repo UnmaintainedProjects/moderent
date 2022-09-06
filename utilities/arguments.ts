@@ -15,7 +15,7 @@
  * along with Moderent.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { Context } from "grammy";
+import { Context, Filter } from "grammy";
 
 const timeExp = /^([1-9])+(h|d)$/;
 
@@ -31,39 +31,37 @@ export interface RestrictionParameters {
 }
 
 export function getRestrictionParameters(
-  ctx: Context,
+  ctx: Filter<Context, "msg:text">,
   noUntilDate?: boolean,
 ): RestrictionParameters {
   const params: RestrictionParameters = {
-    user: ctx.msg?.reply_to_message?.from?.id || 0,
+    user: ctx.msg.reply_to_message?.from?.id || 0,
     readableUntilDate: "",
   };
-  if (ctx.msg?.text) {
-    let text = removeFirst(ctx.msg.text);
-    let firstPart = text.split(/\s/)[0];
-    const id = Number(firstPart);
-    if (id) {
-      text = removeFirst(text);
-      params.user = id;
-    }
-    firstPart = text.split(/\s/)[0];
-    if (!noUntilDate) {
-      const match = firstPart.match(timeExp);
-      if (match) {
-        text = removeFirst(text);
-        const time = Number(match[1]);
-        const unit = match[2];
-        const toAdd = unit == "h" ? time * 60 ** 2 : time * 60 ** 2 * 24;
-        params.untilDate = Date.now() / 1000 + toAdd;
-        const readableUntilDate = `${time} ${
-          { "h": "hour", "d": "day" }[unit]
-        }${time == 1 ? "" : "s"}`;
-        params.readableUntilDate = readableUntilDate
-          ? " for " + readableUntilDate
-          : "";
-      }
-    }
-    params.reason = text;
+  let text = removeFirst(ctx.msg.text);
+  let firstPart = text.split(/\s/)[0];
+  const id = Number(firstPart);
+  if (id) {
+    text = removeFirst(text);
+    params.user = id;
   }
+  firstPart = text.split(/\s/)[0];
+  if (!noUntilDate) {
+    const match = firstPart.match(timeExp);
+    if (match) {
+      text = removeFirst(text);
+      const time = Number(match[1]);
+      const unit = match[2];
+      const toAdd = unit == "h" ? time * 60 ** 2 : time * 60 ** 2 * 24;
+      params.untilDate = Date.now() / 1000 + toAdd;
+      const readableUntilDate = `${time} ${{ "h": "hour", "d": "day" }[unit]}${
+        time == 1 ? "" : "s"
+      }`;
+      params.readableUntilDate = readableUntilDate
+        ? " for " + readableUntilDate
+        : "";
+    }
+  }
+  params.reason = text;
   return params;
 }

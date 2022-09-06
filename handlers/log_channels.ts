@@ -25,7 +25,7 @@ const filter = composer.chatType("supergroup");
 const rights = withRights("owner");
 
 filter.command("setlogchannel", rights, async (ctx) => {
-  const logChannel = Number(ctx.message?.text.split(/\s/)[1]);
+  const logChannel = Number(ctx.msg.text.split(/\s/)[1]);
   if (isNaN(logChannel)) {
     await ctx.reply("Give me the channel\u2019s ID.");
   } else {

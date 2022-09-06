@@ -23,20 +23,20 @@ const filter = composer.chatType("supergroup");
 const rights = withRights("can_pin_messages");
 
 filter.command("pin", rights, async (ctx) => {
-  if (!ctx.message?.reply_to_message) {
+  if (!ctx.msg.reply_to_message) {
     await ctx.reply("Reply a message to pin.");
     return;
   }
-  await ctx.pinChatMessage(ctx.message.reply_to_message.message_id);
+  await ctx.pinChatMessage(ctx.msg.reply_to_message.message_id);
   await ctx.reply("Pinned.");
 });
 
 filter.command("unpin", rights, async (ctx) => {
-  if (!ctx.message?.reply_to_message) {
+  if (!ctx.msg.reply_to_message) {
     await ctx.reply("Reply a pinned message to unpin.");
     return;
   }
-  await ctx.unpinChatMessage(ctx.message.reply_to_message.message_id);
+  await ctx.unpinChatMessage(ctx.msg.reply_to_message.message_id);
   await ctx.reply("Unpinned.");
 });
 
