@@ -23,7 +23,7 @@ export enum Captcha {
 }
 
 export interface Settings {
-  logChat?: number | null;
+  logChannel?: number | null;
   captcha?: Captcha | null;
   locks?: string[];
 }

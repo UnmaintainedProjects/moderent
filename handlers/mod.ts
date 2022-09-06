@@ -17,13 +17,13 @@
 
 import captcha from "./captcha/mod.ts";
 import help from "./help.ts";
-import logChat from "./log_chat.ts";
-import messages from "./messages.ts";
 import locks from "./locks.ts";
+import logChannels from "./log_channels.ts";
+import messages from "./messages.ts";
 import restrictions from "./restrictions.ts";
 import { Context } from "$utilities";
-import { Composer } from "grammy";
 import { autoQuote } from "grammy_autoquote";
+import { Composer } from "grammy";
 
 const composer = new Composer<Context>();
 
@@ -31,9 +31,9 @@ export default composer;
 
 composer.chatType("supergroup").use(autoQuote);
 
-composer.use(locks);
 composer.use(captcha);
 composer.use(help);
-composer.use(logChat);
+composer.use(locks);
+composer.use(logChannels);
 composer.use(messages);
 composer.use(restrictions);
