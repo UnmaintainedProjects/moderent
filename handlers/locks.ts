@@ -37,6 +37,7 @@ const locks: Record<string, string | ((ctx: Context) => boolean)> = {
   bot: (ctx) => ctx.msg?.new_chat_members?.filter((v) => v.is_bot).length != 0,
   button: (ctx) => !!ctx.msg?.reply_markup?.inline_keyboard,
   command: "::bot_command",
+  // TODO: implement
   comment: "",
   contact: ":contact",
   document: ":document",
@@ -45,6 +46,7 @@ const locks: Record<string, string | ((ctx: Context) => boolean)> = {
   emojicustom: (ctx) =>
     (ctx.msg?.entities ?? ctx.msg?.caption_entities)
       ?.filter((v) => v.type == "custom_emoji").length != 0,
+  // TODO: include other emoji games
   emojigame: ":dice",
   emojionly: (ctx) =>
     /^\p{Emoji}+$/u.test(ctx.msg?.text ?? ctx.msg?.caption ?? ""),
@@ -94,7 +96,6 @@ const locks: Record<string, string | ((ctx: Context) => boolean)> = {
   videonote: ":video_note",
   voice: ":voice",
 };
-
 const lockDescriptions: Record<keyof typeof locks, string> = {
   all: "All messages",
   album: "Medias sent as group",
@@ -159,7 +160,6 @@ filter.use(async (ctx, next) => {
 });
 
 const BUTTONS_PER_ROW = 3;
-
 const lockTypesKeyboard = new InlineKeyboard();
 for (const [i, lock] of Object.keys(lockDescriptions).entries()) {
   lockTypesKeyboard.text(lock, `lock_description:${lock}`);
