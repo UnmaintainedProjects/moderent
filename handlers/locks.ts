@@ -18,7 +18,7 @@
 import { Context, withRights } from "$utilities";
 import { getSettings, updateSettings } from "$database";
 import { code, fmt } from "grammy_parse_mode";
-import { Composer, FilterQuery } from "grammy";
+import { Composer, FilterQuery, InlineKeyboard } from "grammy";
 
 const composer = new Composer<Context>();
 const filter = composer.chatType("supergroup");
@@ -158,15 +158,23 @@ filter.use(async (ctx, next) => {
   await next();
 });
 
+const BUTTONS_PER_ROW = 3;
+
+const lockTypesKeyboard = new InlineKeyboard();
+for (const [i, lock] of Object.keys(lockDescriptions).entries()) {
+  lockTypesKeyboard.text(lock, `lock_description:${lock}`);
+  if (i % BUTTONS_PER_ROW == (BUTTONS_PER_ROW - 1)) {
+    lockTypesKeyboard.row();
+  }
+}
 filter.command("locktypes", (ctx) => {
-  return ctx.replyFmt(
-    fmt`Available lock types:\n- ${
-      fmt(
-        ["", ...Object.keys(locks).map(() => "\n- ").slice(0, -1), ""],
-        ...Object.keys(locks).map(code),
-      )
-    }`,
-  );
+  return ctx.reply("The available lock types are:");
+});
+filter.callbackQuery(/^lock_description:([^:]+)$/, (ctx) => {
+  return ctx.answerCallbackQuery({
+    text: lockDescriptions[ctx.match![1]],
+    show_alert: true,
+  });
 });
 
 function getLocks(text: string) {
