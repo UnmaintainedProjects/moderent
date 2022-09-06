@@ -36,7 +36,7 @@ ${bold("Commands")}
 
 /captcha \u2014 shows the current CAPTCHA setting
 /setcaptcha [captcha type | off] \u2014 enables, disables or changes the CAPTCHA type
-/available_captcha_types \u2014 shows the available CAPTCHA types`,
+/captchatypes \u2014 shows the available CAPTCHA types`,
 
   "Locks": fmt`${bold("Locks")}
 
