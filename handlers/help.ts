@@ -45,8 +45,8 @@ With locks, you can make messages with specific types of contents get automatica
 ${bold("Commands")}
 
 /locks \u2014 shows the current locks setting
-/setlocks [lock types...] \u2014 sets the locks
-/unsetlock \u2014 unsets the locks
+/lock [lock types...] \u2014 locks one or more items
+/unlock [lock types...] \u2014 unlocks one or more items
 /locktypes \u2014 shows the available lock types`,
 
   "Log Channels": fmt`${bold("Log Channels")}
