@@ -35,8 +35,46 @@ You can require users to solve a CAPTCHA before they can join the group. To set 
 ${bold("Commands")}
 
 /captcha \u2014 shows the current CAPTCHA setting
-/setcaptcha [type | off] \u2014 enables, disables or changes the CAPTCHA type
+/setcaptcha [captcha type | off] \u2014 enables, disables or changes the CAPTCHA type
 /available_captcha_types \u2014 shows the available CAPTCHA types`,
+
+  "Locks": fmt`${bold("Locks")}
+
+With locks, you can make messages with specific types of contents get automatically deleted.
+
+${bold("Commands")}
+
+/locks \u2014 shows the current locks setting
+/setlocks [lock types...] \u2014 sets the locks
+/unsetlock \u2014 unsets the locks
+/locktypes \u2014 shows the available lock types`,
+
+  "Log Channels": fmt`${bold("Log Channels")}
+
+A log channel will include live logs of things going on in the group, for example, restrictions. To set one up:
+
+1. You should be the owner of the group.
+2. Add and promote me in the channel you would like to use for logging.
+3. Get your log channel\u2019s ID and use the command /setlogchannel to activate it.
+
+${bold("Commands")}
+
+/logchannel \u2014 shows the current log channel setting
+/setlogchannel [channel ID] \u2014 set or changes the log channel
+/unsetlogchannnel \u2014 removes the log channel`,
+
+  "Messages": fmt`${bold("Messages")}
+
+These commands makes working with messages easier.
+
+${bold("Commands")}
+
+/pin \u2014 pins the replied message
+/unpin \u2014 unpins the replied message
+
+${bold("Notes")}
+
+\u2014 /pin and /unpin require the right to pin messages.`,
   "Restrictions": fmt`${bold("Restrictions")}
 
 These commands let you restrict users with an optional expiration time and reason.
@@ -57,31 +95,6 @@ ${bold("Notes")}
 \u2014 The commands starting with "d" require the right to delete messages as well.
 \u2014 The [user ID] parameter is required if not replying to a message.
 \u2014 The [duration] parameter lets you set a time for the restriction to automatically revert, in seconds, or in hours or days if you use one of the h or d suffixes.`,
-  "Log Channels": fmt`${bold("Log Channels")}
-
-A log channel will include live logs of things going on in the group, for example, restrictions. To set one up:
-
-1. You should be the owner of the group.
-2. Add and promote me in the channel you would like to use for logging.
-3. Get your log channel\u2019s ID and use the command /setlogchannel to activate it.
-
-${bold("Commands")}
-
-/logchannel \u2014 shows the current log channel setting
-/setlogchannel [channel ID] \u2014 set or changes the log channel
-/unsetlogchannnel \u2014 removes the log channel`,
-  "Messages": fmt`${bold("Messages")}
-
-These commands makes working with messages easier.
-
-${bold("Commands")}
-
-/pin \u2014 pins the replied message
-/unpin \u2014 unpins the replied message
-
-${bold("Notes")}
-
-\u2014 /pin and /unpin require the right to pin messages.`,
 };
 
 const home = fmt`Moderent lets you ${underline("mod")}erate your groups diff${

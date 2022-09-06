@@ -25,6 +25,7 @@ export enum Captcha {
 export interface Settings {
   logChat?: number | null;
   captcha?: Captcha | null;
+  locks?: string[];
 }
 
 let collection: Collection<Settings & { id: number }>;
