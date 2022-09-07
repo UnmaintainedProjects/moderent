@@ -66,6 +66,7 @@ const locks: Record<string, string | ((ctx: Context) => boolean)> = {
           )
       )
       .filter((v) => v)
+      .map((v) => v?.startsWith("http") ? v : `http://${v}`)
       .map((v) => new URL(v!))
       .filter(
         (v) =>
