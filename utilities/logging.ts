@@ -25,9 +25,9 @@ type LogContext = ChatTypeContext<Context, "group" | "supergroup">;
 
 export function log(ctx: LogContext, text: FormattedString) {
   Promise.resolve().then(async () => {
-    const { logChat } = await getSettings(ctx.chat.id);
-    if (logChat) {
-      await ctx.api.sendMessage(logChat, text.toString(), {
+    const { logChannel } = await getSettings(ctx.chat.id);
+    if (logChannel) {
+      await ctx.api.sendMessage(logChannel, text.toString(), {
         entities: text.entities,
       });
     }
