@@ -37,8 +37,6 @@ const locks: Record<string, string | ((ctx: Context) => boolean)> = {
   bot: (ctx) => ctx.msg?.new_chat_members?.filter((v) => v.is_bot).length != 0,
   button: (ctx) => !!ctx.msg?.reply_markup?.inline_keyboard,
   command: "::bot_command",
-  // TODO: implement
-  comment: "",
   contact: ":contact",
   document: ":document",
   email: "::email",
