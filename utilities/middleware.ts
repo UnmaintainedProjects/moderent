@@ -20,6 +20,7 @@ import { ChatAdministratorRights } from "grammy/types.ts";
 import { Middleware, session as session_ } from "grammy";
 
 export const session = session_({
+  // TODO: use a storage
   initial: (): Session => ({
     admins: new Map(),
   }),
