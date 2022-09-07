@@ -46,7 +46,6 @@ const locks: Record<string, string | ((ctx: Context) => boolean)> = {
   emojicustom: (ctx) =>
     (ctx.msg?.entities ?? ctx.msg?.caption_entities)
       ?.filter((v) => v.type == "custom_emoji").length != 0,
-  // TODO: include other emoji games
   emojigame: ":dice",
   emojionly: (ctx) =>
     /^\p{Emoji}+$/u.test(ctx.msg?.text ?? ctx.msg?.caption ?? ""),
