@@ -88,7 +88,7 @@ const locks: Record<string, string | ((ctx: Context) => boolean)> = {
   text: ":text",
   url: (ctx) =>
     ((ctx.msg?.entities ?? ctx.msg?.caption_entities)
-      ?.filter((v) => ["url", "text_url"].includes(v.type))
+      ?.filter((v) => ["url", "text_link"].includes(v.type))
       .length ?? 0) != 0,
   video: ":video",
   videonote: ":video_note",
