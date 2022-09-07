@@ -32,10 +32,23 @@ export function withRights(
 ): Middleware<Context> {
   return async (ctx, next) => {
     if (ctx.has("message")) {
+      let id: number | undefined;
+      if (ctx.message.sender_chat?.id == ctx.chat.id) {
+        if (ctx.message.author_signature) {
+          id = [...ctx.session.admins.values()].filter((v) =>
+            v.custom_title == ctx.message.author_signature
+          )[0]?.user.id;
+        }
+      } else {
+        id = ctx.from.id;
+      }
+      if (!id) {
+        return;
+      }
       requiredRights = Array.isArray(requiredRights)
         ? requiredRights
         : [requiredRights];
-      const rights = ctx.session.admins.get(ctx.from.id);
+      const rights = ctx.session.admins.get(id);
       if (
         rights && ((requiredRights.includes("owner") &&
           rights.status == "creator") || (rights.status == "creator" || (
