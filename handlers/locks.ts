@@ -34,7 +34,8 @@ const locks: Record<string, string | ((ctx: Context) => boolean)> = {
   anonchannel: (ctx) =>
     !!(ctx.msg?.sender_chat && ctx.msg.sender_chat.id != ctx.chat?.id),
   audio: ":audio",
-  bot: (ctx) => ctx.msg?.new_chat_members?.filter((v) => v.is_bot).length != 0,
+  bot: (ctx) =>
+    (ctx.msg?.new_chat_members?.filter((v) => v.is_bot).length ?? 0) != 0,
   button: (ctx) => !!ctx.msg?.reply_markup?.inline_keyboard,
   command: "::bot_command",
   contact: ":contact",
@@ -42,8 +43,8 @@ const locks: Record<string, string | ((ctx: Context) => boolean)> = {
   email: "::email",
   emoji: (ctx) => /\p{Emoji}/u.test(ctx.msg?.text ?? ctx.msg?.caption ?? ""),
   emojicustom: (ctx) =>
-    (ctx.msg?.entities ?? ctx.msg?.caption_entities)
-      ?.filter((v) => v.type == "custom_emoji").length != 0,
+    ((ctx.msg?.entities ?? ctx.msg?.caption_entities)
+      ?.filter((v) => v.type == "custom_emoji").length ?? 0) != 0,
   emojigame: ":dice",
   emojionly: (ctx) =>
     /^\p{Emoji}+$/u.test(ctx.msg?.text ?? ctx.msg?.caption ?? ""),
@@ -55,7 +56,7 @@ const locks: Record<string, string | ((ctx: Context) => boolean)> = {
   gif: ":animation",
   inline: (ctx) => !!ctx.msg?.via_bot,
   invitelink: (ctx) =>
-    (ctx.msg?.entities ?? ctx.msg?.caption_entities)
+    ((ctx.msg?.entities ?? ctx.msg?.caption_entities)
       ?.filter((v) => v.type == "text_link" || v.type == "url")
       .map((v) =>
         v.type == "text_link" ? v.url : ctx.msg?.text
@@ -72,7 +73,7 @@ const locks: Record<string, string | ((ctx: Context) => boolean)> = {
             .some((v_) => v.hostname.endsWith(v_)),
       )
       .filter((v) => v.hostname.split(".").length != 2 || v.pathname != "/")
-      .length != 0,
+      .length ?? 0) != 0,
   location: ":location",
   phone: "::phone_number",
   photo: ":photo",
@@ -86,9 +87,9 @@ const locks: Record<string, string | ((ctx: Context) => boolean)> = {
   stickerpremium: (ctx) => !!ctx.msg?.sticker?.premium_animation,
   text: ":text",
   url: (ctx) =>
-    (ctx.msg?.entities ?? ctx.msg?.caption_entities)
+    ((ctx.msg?.entities ?? ctx.msg?.caption_entities)
       ?.filter((v) => ["url", "text_url"].includes(v.type))
-      .length != 0,
+      .length ?? 0) != 0,
   video: ":video",
   videonote: ":video_note",
   voice: ":voice",
