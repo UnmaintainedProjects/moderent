@@ -44,7 +44,7 @@ filter.on("chat_member", (ctx) => {
   const newMember = ctx.chatMember.new_chat_member;
   const oldMember = ctx.chatMember.old_chat_member;
   const { user } = newMember;
-  if (user.id != ctx.me.id) {
+  if (ctx.from.id != ctx.me.id) {
     if (oldMember.status == "kicked" && newMember.status != "kicked") {
       logRestrictionEvent(ctx, "UNBAN", ctx.from, user);
     } else if (newMember.status == "kicked") {

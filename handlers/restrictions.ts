@@ -44,7 +44,7 @@ filter.command("ban", rights, async (ctx) => {
     "BAN",
     ctx.from,
     params.user,
-    fmt`${params.reason ?? "Not specified."}`,
+    fmt`Reason: ${params.reason ?? "Not specified."}`,
   );
   await ctx.replyFmt(
     fmt`Banned ${
@@ -65,7 +65,7 @@ filter.command("unban", rights, async (ctx) => {
     "UNBAN",
     ctx.from,
     params.user,
-    fmt`${params.reason ?? "Not specified."}`,
+    fmt`Reason: ${params.reason ?? "Not specified."}`,
   );
   await ctx.replyFmt(fmt`Unbanned ${mentionUser(params.user, params.user)}.`);
 });
@@ -82,7 +82,7 @@ filter.command("dban", rights2, async (ctx) => {
     "BAN",
     ctx.from,
     params.user,
-    fmt`${params.reason ?? "Not specified."}`,
+    fmt`Reason: ${params.reason ?? "Not specified."}`,
   );
   await ctx.deleteMessage();
   if (ctx.msg.reply_to_message) {
@@ -107,7 +107,7 @@ filter.command("kick", rights, async (ctx) => {
     "KICK",
     ctx.from,
     params.user,
-    fmt`${params.reason ?? "Not specified."}`,
+    fmt`Reason: ${params.reason ?? "Not specified."}`,
   );
   await ctx.replyFmt(
     fmt`Kicked ${
@@ -130,7 +130,7 @@ filter.command("dkick", rights2, async (ctx) => {
     "KICK",
     ctx.from,
     params.user,
-    fmt`${params.reason ?? "Not specified."}`,
+    fmt`Reason: ${params.reason ?? "Not specified."}`,
   );
   if (ctx.msg.reply_to_message) {
     await ctx.api.deleteMessage(
@@ -154,7 +154,7 @@ filter.command("mute", rights, async (ctx) => {
     "RESTRICT",
     ctx.from,
     params.user,
-    fmt`${params.reason ?? "Not specified."}\n\n-can_send_messages`,
+    fmt`Reason: ${params.reason ?? "Not specified."}\n\n-can_send_messages`,
   );
   await ctx.replyFmt(
     fmt`Muted ${
@@ -184,7 +184,14 @@ filter.command("unmute", rights, async (ctx) => {
     "DERESTRICT",
     ctx.from,
     params.user,
-    fmt`${params.reason ?? "Not specified."}`,
+    fmt`Reason: ${params.reason ?? "Not specified."}\n\n+can_send_polls
++can_change_info
++can_invite_users
++can_pin_messages
++can_send_messages
++can_send_media_messages
++can_send_other_messages
++can_add_web_page_previews`,
   );
   await ctx.replyFmt(`Unmuted ${mentionUser(params.user, params.user)}.`);
 });
@@ -203,7 +210,7 @@ filter.command("dmute", rights, async (ctx) => {
     "RESTRICT",
     ctx.from,
     params.user,
-    fmt`${params.reason ?? "Not specified."}\n\n-can_send_messages`,
+    fmt`Reason: ${params.reason ?? "Not specified."}\n\n-can_send_messages`,
   );
   await ctx.deleteMessage();
   if (ctx.msg.reply_to_message) {

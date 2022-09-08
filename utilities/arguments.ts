@@ -62,6 +62,8 @@ export function getRestrictionParameters(
         : "";
     }
   }
-  params.reason = text;
+  if (text) {
+    params.reason = text;
+  }
   return params;
 }
