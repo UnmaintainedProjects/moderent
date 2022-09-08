@@ -15,9 +15,13 @@
  * along with Moderent.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { Context } from "$utilities";
+import { Context, logChatEvent, logRestrictionEvent } from "$utilities";
 import { ChatMemberAdministrator, ChatMemberOwner } from "grammy/types.ts";
 import { Composer } from "grammy";
+import {
+  fmt,
+  mentionUser,
+} from "https://deno.land/x/grammy_parse_mode@1.4.0/format.ts";
 
 const composer = new Composer<Context>();
 
@@ -37,10 +41,37 @@ filter.use(async (ctx, next) => {
 });
 
 filter.on("chat_member", (ctx) => {
-  const member = ctx.chatMember.new_chat_member;
-  const { id } = member.user;
-  if (member.status == "creator" || member.status == "administrator") {
-    ctx.session.admins.set(id, member);
+  const newMember = ctx.chatMember.new_chat_member;
+  const oldMember = ctx.chatMember.old_chat_member;
+  const { user } = newMember;
+  if (oldMember.status == "kicked" && newMember.status != "kicked") {
+    logRestrictionEvent(ctx, "UNBAN", ctx.from, user);
+  } else if (newMember.status == "kicked") {
+    logRestrictionEvent(ctx, "BAN", ctx.from, user);
+  } else if (newMember.status == "administrator") {
+    logRestrictionEvent(ctx, "PROMOTE", ctx.from, user);
+  } else if (newMember.status == "left") {
+    logChatEvent(
+      ctx,
+      "LEAVE",
+      fmt`User: ${
+        mentionUser(
+          user.first_name + (user.last_name ? " " + user.last_name : "") +
+            (user.username ? ` (@${user.username})` : ""),
+          user.id,
+        )
+      }`,
+    );
+  } else if (newMember.status == "restricted") {
+    // TODO: show diff
+    logRestrictionEvent(ctx, "RESTRICT", ctx.from, user);
+  } else if (oldMember.status == "restricted" && newMember.status == "member") {
+    // TODO: show diff
+    logRestrictionEvent(ctx, "DERESTRICT", ctx.from, user);
+  }
+  const { id } = user;
+  if (newMember.status == "creator" || newMember.status == "administrator") {
+    ctx.session.admins.set(id, newMember);
   } else if (ctx.session.admins.has(id)) {
     ctx.session.admins.delete(id);
   }

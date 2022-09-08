@@ -39,9 +39,13 @@ filter.command("ban", rights, async (ctx) => {
     return;
   }
   await ctx.banChatMember(params.user, { until_date: params.untilDate });
-  logRestrictionEvent(ctx, "BAN", ctx.from, params.user, {
-    reason: params.reason,
-  });
+  logRestrictionEvent(
+    ctx,
+    "BAN",
+    ctx.from,
+    params.user,
+    fmt`${params.reason ?? "Not specified."}`,
+  );
   await ctx.replyFmt(
     fmt`Banned ${
       mentionUser(params.user, params.user)
@@ -56,9 +60,13 @@ filter.command("unban", rights, async (ctx) => {
     return;
   }
   await ctx.unbanChatMember(params.user);
-  logRestrictionEvent(ctx, "UNBAN", ctx.from, params.user, {
-    reason: params.reason,
-  });
+  logRestrictionEvent(
+    ctx,
+    "UNBAN",
+    ctx.from,
+    params.user,
+    fmt`${params.reason ?? "Not specified."}`,
+  );
   await ctx.replyFmt(fmt`Unbanned ${mentionUser(params.user, params.user)}.`);
 });
 
@@ -69,9 +77,13 @@ filter.command("dban", rights2, async (ctx) => {
     return;
   }
   await ctx.banChatMember(params.user, { until_date: params.untilDate });
-  logRestrictionEvent(ctx, "BAN", ctx.from, params.user, {
-    reason: params.reason,
-  });
+  logRestrictionEvent(
+    ctx,
+    "BAN",
+    ctx.from,
+    params.user,
+    fmt`${params.reason ?? "Not specified."}`,
+  );
   await ctx.deleteMessage();
   if (ctx.msg.reply_to_message) {
     await ctx.api.deleteMessage(
@@ -90,9 +102,13 @@ filter.command("kick", rights, async (ctx) => {
   await ctx.banChatMember(params.user, { until_date: params.untilDate });
   await new Promise((r) => setTimeout(r, 1000));
   await ctx.unbanChatMember(params.user);
-  logRestrictionEvent(ctx, "KICK", ctx.from, params.user, {
-    reason: params.reason,
-  });
+  logRestrictionEvent(
+    ctx,
+    "KICK",
+    ctx.from,
+    params.user,
+    fmt`${params.reason ?? "Not specified."}`,
+  );
   await ctx.replyFmt(
     fmt`Kicked ${
       mentionUser(params.user, params.user)
@@ -109,9 +125,13 @@ filter.command("dkick", rights2, async (ctx) => {
   await ctx.banChatMember(params.user, { until_date: params.untilDate });
   await new Promise((r) => setTimeout(r, 1000));
   await ctx.unbanChatMember(params.user);
-  logRestrictionEvent(ctx, "KICK", ctx.from, params.user, {
-    reason: params.reason,
-  });
+  logRestrictionEvent(
+    ctx,
+    "KICK",
+    ctx.from,
+    params.user,
+    fmt`${params.reason ?? "Not specified."}`,
+  );
   if (ctx.msg.reply_to_message) {
     await ctx.api.deleteMessage(
       ctx.chat.id,
@@ -129,9 +149,13 @@ filter.command("mute", rights, async (ctx) => {
   await ctx.restrictChatMember(params.user, { can_send_messages: false }, {
     until_date: params.untilDate,
   });
-  logRestrictionEvent(ctx, "MUTE", ctx.from, params.user, {
-    reason: params.reason,
-  });
+  logRestrictionEvent(
+    ctx,
+    "RESTRICT",
+    ctx.from,
+    params.user,
+    fmt`${params.reason ?? "Not specified."}\n\n-can_send_messages`,
+  );
   await ctx.replyFmt(
     fmt`Muted ${
       mentionUser(params.user, params.user)
@@ -155,9 +179,13 @@ filter.command("unmute", rights, async (ctx) => {
     can_send_other_messages: true,
     can_add_web_page_previews: true,
   });
-  logRestrictionEvent(ctx, "UNMUTE", ctx.from, params.user, {
-    reason: params.reason,
-  });
+  logRestrictionEvent(
+    ctx,
+    "DERESTRICT",
+    ctx.from,
+    params.user,
+    fmt`${params.reason ?? "Not specified."}`,
+  );
   await ctx.replyFmt(`Unmuted ${mentionUser(params.user, params.user)}.`);
 });
 
@@ -170,9 +198,13 @@ filter.command("dmute", rights, async (ctx) => {
   await ctx.restrictChatMember(params.user, { can_send_messages: false }, {
     until_date: params.untilDate,
   });
-  logRestrictionEvent(ctx, "MUTE", ctx.from, params.user, {
-    reason: params.reason,
-  });
+  logRestrictionEvent(
+    ctx,
+    "RESTRICT",
+    ctx.from,
+    params.user,
+    fmt`${params.reason ?? "Not specified."}\n\n-can_send_messages`,
+  );
   await ctx.deleteMessage();
   if (ctx.msg.reply_to_message) {
     await ctx.api.deleteMessage(

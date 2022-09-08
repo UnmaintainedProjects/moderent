@@ -19,7 +19,12 @@ import { Context } from "./types.ts";
 import { getSettings } from "$database";
 import { User } from "grammy/types.ts";
 import { ChatTypeContext } from "grammy";
-import { fmt, FormattedString, mentionUser } from "grammy_parse_mode";
+import {
+  fmt,
+  FormattedString,
+  mentionUser,
+  Stringable,
+} from "grammy_parse_mode";
 
 type LogContext = ChatTypeContext<Context, "group" | "supergroup">;
 
@@ -36,18 +41,21 @@ export function log(ctx: LogContext, text: FormattedString) {
   });
 }
 
+export function logChatEvent(ctx: LogContext, type: string, other: Stringable) {
+  log(ctx, fmt`#${type}\nChat: ${ctx.chat.title}\n${other}`);
+}
+
 export function logRestrictionEvent(
   ctx: LogContext,
   type: string,
   admin: User,
   target: number | User,
-  params?: { reason?: string; other?: string },
+  other?: Stringable,
 ) {
-  log(
+  logChatEvent(
     ctx,
-    fmt`#${type}\nChat: ${ctx.chat.title}\nAdmin: ${
-      mentionUser(admin.first_name, admin.id)
-    }\nTarget: ${
+    type,
+    fmt`Admin: ${mentionUser(admin.first_name, admin.id)}\nTarget: ${
       mentionUser(
         typeof target === "number" ? target : target.username ??
             target.first_name + target.last_name
@@ -55,8 +63,6 @@ export function logRestrictionEvent(
           : "",
         typeof target === "number" ? target : target.id,
       )
-    }${params?.reason ? `\nReason: ${params.reason}` : ""}${
-      params?.other ? `\n${params.other}` : ""
-    }`,
+    }${other ? fmt`\n${other}` : ""}`,
   );
 }
