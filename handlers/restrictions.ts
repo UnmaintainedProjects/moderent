@@ -44,7 +44,7 @@ filter.command("ban", rights, async (ctx) => {
     "BAN",
     ctx.from,
     params.user,
-    fmt`Reason: ${params.reason ?? "Not specified."}`,
+    fmt`Reason: ${params.reason ?? "Unspecified"}`,
   );
   await ctx.replyFmt(
     fmt`Banned ${
@@ -65,7 +65,7 @@ filter.command("unban", rights, async (ctx) => {
     "UNBAN",
     ctx.from,
     params.user,
-    fmt`Reason: ${params.reason ?? "Not specified."}`,
+    fmt`Reason: ${params.reason ?? "Unspecified"}`,
   );
   await ctx.replyFmt(fmt`Unbanned ${mentionUser(params.user, params.user)}.`);
 });
@@ -82,7 +82,7 @@ filter.command("dban", rights2, async (ctx) => {
     "BAN",
     ctx.from,
     params.user,
-    fmt`Reason: ${params.reason ?? "Not specified."}`,
+    fmt`Reason: ${params.reason ?? "Unspecified"}`,
   );
   await ctx.deleteMessage();
   if (ctx.msg.reply_to_message) {
@@ -100,14 +100,14 @@ filter.command("kick", rights, async (ctx) => {
     return;
   }
   await ctx.banChatMember(params.user, { until_date: params.untilDate });
-  await new Promise((r) => setTimeout(r, 1000));
+  await new Promise((r) => setTimeout(r, 1000)); // necessary?
   await ctx.unbanChatMember(params.user);
   logRestrictionEvent(
     ctx,
     "KICK",
     ctx.from,
     params.user,
-    fmt`Reason: ${params.reason ?? "Not specified."}`,
+    fmt`Reason: ${params.reason ?? "Unspecified"}`,
   );
   await ctx.replyFmt(
     fmt`Kicked ${
@@ -130,7 +130,7 @@ filter.command("dkick", rights2, async (ctx) => {
     "KICK",
     ctx.from,
     params.user,
-    fmt`Reason: ${params.reason ?? "Not specified."}`,
+    fmt`Reason: ${params.reason ?? "Unspecified"}`,
   );
   if (ctx.msg.reply_to_message) {
     await ctx.api.deleteMessage(
@@ -151,10 +151,10 @@ filter.command("mute", rights, async (ctx) => {
   });
   logRestrictionEvent(
     ctx,
-    "RESTRICT",
+    "MUTE",
     ctx.from,
     params.user,
-    fmt`Reason: ${params.reason ?? "Not specified."}\n\n-can_send_messages`,
+    fmt`Reason: ${params.reason ?? "Unspecified"}`,
   );
   await ctx.replyFmt(
     fmt`Muted ${
@@ -181,17 +181,10 @@ filter.command("unmute", rights, async (ctx) => {
   });
   logRestrictionEvent(
     ctx,
-    "DERESTRICT",
+    "UNMUTE",
     ctx.from,
     params.user,
-    fmt`Reason: ${params.reason ?? "Not specified."}\n\n+can_send_polls
-+can_change_info
-+can_invite_users
-+can_pin_messages
-+can_send_messages
-+can_send_media_messages
-+can_send_other_messages
-+can_add_web_page_previews`,
+    fmt`Reason: ${params.reason ?? "Unspecified"}`,
   );
   await ctx.replyFmt(`Unmuted ${mentionUser(params.user, params.user)}.`);
 });
@@ -207,10 +200,10 @@ filter.command("dmute", rights, async (ctx) => {
   });
   logRestrictionEvent(
     ctx,
-    "RESTRICT",
+    "MUTE",
     ctx.from,
     params.user,
-    fmt`Reason: ${params.reason ?? "Not specified."}\n\n-can_send_messages`,
+    fmt`Reason: ${params.reason ?? "Unspecified"}`,
   );
   await ctx.deleteMessage();
   if (ctx.msg.reply_to_message) {

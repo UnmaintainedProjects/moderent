@@ -16,8 +16,13 @@
  */
 
 import { Context, logChatEvent, logRestrictionEvent } from "$utilities";
-import { ChatMemberAdministrator, ChatMemberOwner } from "grammy/types.ts";
-import { Composer } from "grammy";
+import {
+  ChatMember,
+  ChatMemberAdministrator,
+  ChatMemberOwner,
+  ChatMemberRestricted,
+} from "grammy/types.ts";
+import { Composer, Keyboard } from "grammy";
 import {
   fmt,
   mentionUser,
@@ -65,7 +70,25 @@ filter.on("chat_member", (ctx) => {
       );
     } else if (newMember.status == "restricted") {
       // TODO: show diff
-      logRestrictionEvent(ctx, "RESTRICT", ctx.from, user);
+      logRestrictionEvent(
+        ctx,
+        "RESTRICT",
+        ctx.from,
+        user,
+        Object.entries(newMember)
+          .filter(([k]) => k.startsWith("can_"))
+          .map(
+            ([k, v]) => [
+              k.replace(
+                /[a-z][a-z]+(_|$)/g,
+                (s) => s[0].toUpperCase() + s.slice(1).replace(/_/g, "") + " ",
+              ).trim(),
+              v ? "Yes" : "No",
+            ],
+          )
+          .map((v) => v.join(": "))
+          .join("\n"),
+      );
     } else if (
       oldMember.status == "restricted" && newMember.status == "member"
     ) {
