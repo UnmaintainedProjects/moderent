@@ -16,13 +16,8 @@
  */
 
 import { Context, logChatEvent, logRestrictionEvent } from "$utilities";
-import {
-  ChatMember,
-  ChatMemberAdministrator,
-  ChatMemberOwner,
-  ChatMemberRestricted,
-} from "grammy/types.ts";
-import { Composer, Keyboard } from "grammy";
+import { ChatMemberAdministrator, ChatMemberOwner } from "grammy/types.ts";
+import { Composer } from "grammy";
 import {
   fmt,
   mentionUser,
