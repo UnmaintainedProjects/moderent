@@ -69,7 +69,6 @@ filter.on("chat_member", (ctx) => {
         }`,
       );
     } else if (newMember.status == "restricted") {
-      // TODO: show diff
       logRestrictionEvent(
         ctx,
         "RESTRICT",
@@ -92,7 +91,6 @@ filter.on("chat_member", (ctx) => {
     } else if (
       oldMember.status == "restricted" && newMember.status == "member"
     ) {
-      // TODO: show diff
       logRestrictionEvent(ctx, "DERESTRICT", ctx.from, user);
     }
   }
