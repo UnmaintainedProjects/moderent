@@ -49,9 +49,11 @@ export async function get<T = unknown>(key: string): Promise<T | null> {
 }
 
 export async function set<T = unknown>(key: string, value: T) {
-  const result = await collection.updateOne({ key }, { $set: { value } }, {
-    upsert: true,
-  });
+  const result = await collection.updateOne(
+    { key },
+    { $set: { value } },
+    { upsert: true },
+  );
   cache.set(key, value);
   return result.modifiedCount + result.upsertedCount > 0;
 }

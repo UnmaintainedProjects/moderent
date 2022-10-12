@@ -36,9 +36,9 @@ export function withRights(
       let id: number | undefined;
       if (ctx.message.sender_chat?.id == ctx.chat.id) {
         if (ctx.message.author_signature) {
-          id = [...ctx.session.admins.values()].filter((v) =>
-            v.custom_title == ctx.message.author_signature
-          )[0]?.user.id;
+          id = [...ctx.session.admins.values()]
+            .filter((v) => v.custom_title == ctx.message.author_signature)[0]
+            ?.user.id;
         }
       } else {
         id = ctx.from.id;

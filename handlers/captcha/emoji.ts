@@ -148,11 +148,14 @@ export async function emoji(
       keyboard.row();
     }
   }
-  await ctx.replyWithPhoto(new InputFile(new Blob([await res.arrayBuffer()])), {
-    caption: "Which emojis do you see in the photo?",
-    reply_markup: keyboard,
-    reply_to_message_id: ctx.msg?.message_id,
-  });
+  await ctx.replyWithPhoto(
+    new InputFile(new Blob([await res.arrayBuffer()])),
+    {
+      caption: "Which emojis do you see in the photo?",
+      reply_markup: keyboard,
+      reply_to_message_id: ctx.msg?.message_id,
+    },
+  );
 }
 
 export default composer;

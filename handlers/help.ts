@@ -120,35 +120,38 @@ filter.callbackQuery(/^help_(.+)$/, async (ctx) => {
   if (!help) {
     return;
   }
-  await ctx.editMessageText(help.text, {
-    entities: help.entities,
-    reply_markup: new InlineKeyboard().text("Back", "back"),
-  });
+  await ctx.editMessageText(
+    help.text,
+    {
+      entities: help.entities,
+      reply_markup: new InlineKeyboard().text("Back", "back"),
+    },
+  );
 });
 
 filter.callbackQuery("back", async (ctx) => {
   await ctx.answerCallbackQuery();
-  await ctx.editMessageText(home.text, {
-    entities: home.entities,
-    reply_markup: homeKeyboard,
-  });
+  await ctx.editMessageText(
+    home.text,
+    { entities: home.entities, reply_markup: homeKeyboard },
+  );
 });
 
 filter.command("help", async (ctx) => {
-  await ctx.replyFmt(home.text, {
-    entities: home.entities,
-    reply_markup: homeKeyboard,
-  });
+  await ctx.replyFmt(
+    home.text,
+    { entities: home.entities, reply_markup: homeKeyboard },
+  );
 });
 
 filter.command(
   "start",
   (ctx) =>
     ctx.msg.text.includes("help")
-      ? ctx.replyFmt(home.text, {
-        entities: home.entities,
-        reply_markup: homeKeyboard,
-      })
+      ? ctx.replyFmt(
+        home.text,
+        { entities: home.entities, reply_markup: homeKeyboard },
+      )
       : ctx.replyFmt(
         fmt`I\u2019m Moderent \u2014 the diff${underline("erent")} way to ${
           underline("mod")
@@ -177,12 +180,15 @@ filter2.command(
 filter2.command(
   "help",
   (ctx) =>
-    ctx.reply("Use the button below read the help in private chat.", {
-      reply_markup: new InlineKeyboard().url(
-        "Help",
-        `https://t.me/${ctx.me.username}?start=help`,
-      ),
-    }),
+    ctx.reply(
+      "Use the button below read the help in private chat.",
+      {
+        reply_markup: new InlineKeyboard().url(
+          "Help",
+          `https://t.me/${ctx.me.username}?start=help`,
+        ),
+      },
+    ),
 );
 
 export default composer;

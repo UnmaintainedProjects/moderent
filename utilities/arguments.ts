@@ -58,7 +58,7 @@ export function getRestrictionParameters(
         time == 1 ? "" : "s"
       }`;
       params.readableUntilDate = readableUntilDate
-        ? " for " + readableUntilDate
+        ? ` for ${readableUntilDate}`
         : "";
     }
   }
