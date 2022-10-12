@@ -45,7 +45,7 @@ filter.command("ban", rights, async (ctx) => {
     "BAN",
     ctx.from,
     params.user,
-    fmt`Reason: ${params.reason ?? "Unspecified"}`,
+    `Reason: ${params.reason ?? "Unspecified"}`,
   );
   await ctx.replyFmt(
     fmt`Banned ${
@@ -66,7 +66,7 @@ filter.command("unban", rights, async (ctx) => {
     "UNBAN",
     ctx.from,
     params.user,
-    fmt`Reason: ${params.reason ?? "Unspecified"}`,
+    `Reason: ${params.reason ?? "Unspecified"}`,
   );
   await ctx.replyFmt(fmt`Unbanned ${mentionUser(params.user, params.user)}.`);
 });
@@ -83,7 +83,7 @@ filter.command("dban", rights2, async (ctx) => {
     "BAN",
     ctx.from,
     params.user,
-    fmt`Reason: ${params.reason ?? "Unspecified"}`,
+    `Reason: ${params.reason ?? "Unspecified"}`,
   );
   await ctx.deleteMessage();
   if (ctx.msg.reply_to_message) {
@@ -108,7 +108,7 @@ filter.command("kick", rights, async (ctx) => {
     "KICK",
     ctx.from,
     params.user,
-    fmt`Reason: ${params.reason ?? "Unspecified"}`,
+    `Reason: ${params.reason ?? "Unspecified"}`,
   );
   await ctx.replyFmt(
     fmt`Kicked ${
@@ -131,7 +131,7 @@ filter.command("dkick", rights2, async (ctx) => {
     "KICK",
     ctx.from,
     params.user,
-    fmt`Reason: ${params.reason ?? "Unspecified"}`,
+    `Reason: ${params.reason ?? "Unspecified"}`,
   );
   if (ctx.msg.reply_to_message) {
     await ctx.api.deleteMessage(
@@ -155,7 +155,7 @@ filter.command("mute", rights, async (ctx) => {
     "MUTE",
     ctx.from,
     params.user,
-    fmt`Reason: ${params.reason ?? "Unspecified"}`,
+    `Reason: ${params.reason ?? "Unspecified"}`,
   );
   await ctx.replyFmt(
     fmt`Muted ${
@@ -185,7 +185,7 @@ filter.command("unmute", rights, async (ctx) => {
     "UNMUTE",
     ctx.from,
     params.user,
-    fmt`Reason: ${params.reason ?? "Unspecified"}`,
+    `Reason: ${params.reason ?? "Unspecified"}`,
   );
   await ctx.replyFmt(`Unmuted ${mentionUser(params.user, params.user)}.`);
 });
@@ -204,7 +204,7 @@ filter.command("dmute", rights, async (ctx) => {
     "MUTE",
     ctx.from,
     params.user,
-    fmt`Reason: ${params.reason ?? "Unspecified"}`,
+    `Reason: ${params.reason ?? "Unspecified"}`,
   );
   await ctx.deleteMessage();
   if (ctx.msg.reply_to_message) {

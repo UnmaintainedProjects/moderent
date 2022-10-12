@@ -28,10 +28,6 @@ import { getSettings, warn } from "../database/mod.ts";
 const composer = new Composer<Context>();
 const filter = composer.chatType("supergroup");
 const rights = withRights("can_restrict_members");
-const rights2 = withRights([
-  "can_restrict_members",
-  "can_delete_messages",
-]);
 
 filter.command("warn", rights, async (ctx) => {
   const { user, reason } = getRestrictionParameters(ctx, true);
@@ -46,7 +42,7 @@ filter.command("warn", rights, async (ctx) => {
     `WARN ${warns}/${warnLimit}`,
     ctx.from,
     user,
-    fmt`Reason: ${reason ?? "Unspecified"}`,
+    `Reason: ${reason ?? "Unspecified"}`,
   );
   if (warns == warnLimit) {
     await ctx.banChatMember(user);
