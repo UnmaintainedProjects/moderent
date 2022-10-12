@@ -26,6 +26,7 @@ export interface Settings {
   logChannel?: number | null;
   captcha?: Captcha | null;
   locks?: string[];
+  warnLimit?: number;
 }
 
 let collection: Collection<Settings & { id: number }>;
