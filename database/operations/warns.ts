@@ -15,64 +15,66 @@
  * along with Moderent.  If not, see <https://www.gnu.org/licenses/>.
  */
 
- import { database } from "../database.ts";
- import { Collection } from "mongo";
- 
- 
- let collection: Collection<
-    {
-     userId: number;
-     chatId: number;
-     warns: number;
-   }
- >;
- const cache = new Map<`${number}${number}`, number | null>();
- 
- export function initializeWarns() {
-   collection = database.collection("warns");
-   collection.createIndexes({
-     indexes: [
-       {
-         key: { "userId": 1, "chatId": 1 },
-         name: "userIdchatId",
-         unique: true,
-       },
-     ],
-   });
- }
- 
- export async function getCaptchaState(
-   userId: number,
-   chatId: number,
- ): Promise<CaptchaState | null> {
-   let captchaState = cache.get(`${userId}${chatId}`);
-   if (typeof captchaState === "undefined") {
-     captchaState = await collection.findOne({ userId, chatId }) ?? null;
-     cache.set(`${userId}${chatId}`, captchaState);
-   }
-   return captchaState;
- }
- 
- export async function updateCaptchaState(
-   userId: number,
-   chatId: number,
-   state: CaptchaState,
- ) {
-   const result = await collection.updateOne({ userId, chatId }, {
-     $set: { ...state },
-   }, {
-     upsert: true,
-   });
-   cache.set(`${userId}${chatId}`, {
-     ...cache.get(`${userId}${chatId}`) ?? {},
-     ...state,
-   });
-   return result.modifiedCount + result.upsertedCount > 0;
- }
- 
- export async function deleteCaptchaState(userId: number, chatId: number) {
-   const result = await collection.deleteOne({ userId, chatId });
-   cache.delete(`${userId}${chatId}`);
-   return result > 0;
- }
- 
+import { database } from "../database.ts";
+import { Collection } from "mongo";
+
+let collection: Collection<
+  {
+    userId: number;
+    chatId: number;
+    warns: number;
+  }
+>;
+const cache = new Map<`${number}${number}`, number | null>();
+
+export function initializeWarns() {
+  collection = database.collection("warns");
+  collection.createIndexes({
+    indexes: [
+      {
+        key: { "userId": 1, "chatId": 1 },
+        name: "userIdchatId",
+        unique: true,
+      },
+    ],
+  });
+}
+
+export async function getWarns(userId: number, chatId: number) {
+  let warns = cache.get(`${userId}${chatId}`);
+  if (typeof warns !== "number") {
+    warns = (await collection.findOne({ userId, chatId }))?.warns ?? 0;
+    cache.set(`${userId}${chatId}`, warns);
+  }
+  return warns;
+}
+
+export async function warn(
+  userId: number,
+  chatId: number,
+): Promise<number> {
+  let warns = await getWarns(userId, chatId);
+  await collection.updateOne({ userId, chatId }, { $inc: { warns: 1 } });
+  warns++
+  cache.set(`${userId}${chatId}`, warns);
+  return warns;
+}
+
+export async function unwarn(
+  userId: number,
+  chatId: number,
+  all?: boolean,
+): Promise<number> {
+  let warns = await getWarns(userId, chatId);
+  if (warns > 0) {
+    if (all) {
+      await collection.updateOne({ userId, chatId }, { $set: { warns: 0 } });
+      warns = 0;
+    } else {
+      await collection.updateOne({ userId, chatId }, { $dec: { warns: 1 } });
+      warns--;
+    }
+  }
+  cache.set(`${userId}${chatId}`, warns);
+  return warns;
+}
