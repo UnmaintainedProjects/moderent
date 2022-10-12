@@ -24,6 +24,7 @@ import {
 } from "$utilities";
 import { fmt, mentionUser } from "grammy_parse_mode";
 import { Composer } from "grammy";
+import { getSettings,warn } from "../database/mod.ts";
 
 const composer = new Composer<Context>();
 const filter = composer.chatType("supergroup");
@@ -33,7 +34,22 @@ const rights2 = withRights([
   "can_delete_messages",
 ]);
 
-filter.command("warn", rights, (ctx) => {
+filter.command("warn", rights, async (ctx) => {
+  const { user, reason } = getRestrictionParameters(ctx, true);
+  if (!user) {
+    await ctx.reply("Target not specified.");
+    return;
+  }
+  const warns = await warn(user, ctx.chat.id)
+  const warnLimit = (await getSettings(ctx.chat.id))?.warnLimit ?? 3;
+  if (warns == warnLimit) {
+    // ban
+  }
+  await ctx.replyFmt(
+    fmt`${mentionUser(user, user)} was warned${
+      reason ? `for:\n${reason}\n\n` : ". "
+    }${warns == warnLimit ? fmt`This was the last warn. ${mentionUser(user, user)} was banned.` : `This is the ${warns}${warns ==1 ? 'st' : warns == 2 ? 'nd' : warns == 3 ? 'rd' : 'st'} warn.`}`,
+  );
 });
 
 export default composer;
