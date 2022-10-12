@@ -55,7 +55,7 @@ export async function warn(
 ): Promise<number> {
   let warns = await getWarns(userId, chatId);
   await collection.updateOne({ userId, chatId }, { $inc: { warns: 1 } });
-  warns++
+  warns++;
   cache.set(`${userId}${chatId}`, warns);
   return warns;
 }

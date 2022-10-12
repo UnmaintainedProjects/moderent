@@ -18,7 +18,6 @@
 import {
   Context,
   getRestrictionParameters,
-  logChatEvent,
   logRestrictionEvent,
   withRights,
 } from "$utilities";
