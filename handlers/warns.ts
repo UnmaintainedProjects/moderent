@@ -24,7 +24,7 @@ import {
 } from "$utilities";
 import { fmt, mentionUser } from "grammy_parse_mode";
 import { Composer } from "grammy";
-import { getSettings,warn } from "../database/mod.ts";
+import { getSettings, warn } from "../database/mod.ts";
 
 const composer = new Composer<Context>();
 const filter = composer.chatType("supergroup");
@@ -40,15 +40,35 @@ filter.command("warn", rights, async (ctx) => {
     await ctx.reply("Target not specified.");
     return;
   }
-  const warns = await warn(user, ctx.chat.id)
+  const warns = await warn(user, ctx.chat.id);
   const warnLimit = (await getSettings(ctx.chat.id))?.warnLimit ?? 3;
+  logRestrictionEvent(
+    ctx,
+    `WARN ${warns}/${warnLimit}`,
+    ctx.from,
+    user,
+    fmt`Reason: ${reason ?? "Unspecified"}`,
+  );
   if (warns == warnLimit) {
-    // ban
+    await ctx.banChatMember(user);
+    logRestrictionEvent(
+      ctx,
+      "BAN",
+      ctx.from,
+      user,
+      `Warn limit reached (${warnLimit})`,
+    );
   }
   await ctx.replyFmt(
     fmt`${mentionUser(user, user)} was warned${
       reason ? `for:\n${reason}\n\n` : ". "
-    }${warns == warnLimit ? fmt`This was the last warn. ${mentionUser(user, user)} was banned.` : `This is the ${warns}${warns ==1 ? 'st' : warns == 2 ? 'nd' : warns == 3 ? 'rd' : 'st'} warn.`}`,
+    }${
+      warns == warnLimit
+        ? fmt`This was the last warn. ${mentionUser(user, user)} was banned.`
+        : `This is the ${warns}${
+          warns == 1 ? "st" : warns == 2 ? "nd" : warns == 3 ? "rd" : "st"
+        } warn.`
+    }`,
   );
 });
 
