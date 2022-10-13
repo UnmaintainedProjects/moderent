@@ -62,7 +62,7 @@ filter.command("warn", rights, async (ctx) => {
   }
   await ctx.replyFmt(
     fmt`${mentionUser(user, user)} was warned${
-      reason ? `for:\n${reason}\n\n` : ". "
+      reason ? ` for:\n${reason}\n\n` : ". "
     }${
       warns == warnLimit
         ? fmt`This was the last warn. ${mentionUser(user, user)} was banned.`
