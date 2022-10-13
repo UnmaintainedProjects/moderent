@@ -34,12 +34,13 @@ filter.command("warn", rights, async (ctx) => {
   if (!user) {
     await ctx.reply("Target not specified.");
     return;
-  } else if (user == ctx.msg.reply_to_message?.from?.id && ctx.msg.reply_to_message.from.is_bot) {
-    await ctx.reply("Can\u2019t warn bots.")
-    return
-  } else if (ctx.session.admins.has(user)) {
-    await ctx.reply("Can\u2019t warn admins.")
-    return
+  } else if (
+    ctx.session.admins.has(user) ||
+    user == ctx.msg.reply_to_message?.from?.id &&
+      ctx.msg.reply_to_message.from.is_bot
+  ) {
+    await ctx.reply("Can\u2019t warn admins or bots.");
+    return;
   }
   const warns = await warn(user, ctx.chat.id);
   const warnLimit = (await getSettings(ctx.chat.id))?.warnLimit ?? 3;
