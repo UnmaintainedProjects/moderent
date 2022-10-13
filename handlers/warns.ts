@@ -156,7 +156,7 @@ filter.command("warns", rights, async (ctx) => {
     return;
   }
   const warns = await getWarns(user, ctx.chat.id);
-  await ctx.replyFmt(`${mentionUser(user, user)} has ${warns} warns.`);
+  await ctx.replyFmt(`${mentionUser(user, user)} has ${warns} warn${warns == 1 ? '' : 's'}.`);
 });
 
 export default composer;
