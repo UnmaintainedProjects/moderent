@@ -52,7 +52,7 @@ filter.command(["warn", "dwarn", "swarn"], rights, async (ctx) => {
     await ctx.deleteMessage();
   }
   const warns = await warn(user, ctx.chat.id);
-  const warnLimit = (await getSettings(ctx.chat.id))?.warnLimit ?? 3;
+  const warnLimit = (await getSettings(ctx.chat.id)).warnLimit;
   logRestrictionEvent(
     ctx,
     `WARN ${warns}/${warnLimit}`,
@@ -156,7 +156,9 @@ filter.command("warns", rights, async (ctx) => {
     return;
   }
   const warns = await getWarns(user, ctx.chat.id);
-  await ctx.replyFmt(`${mentionUser(user, user)} has ${warns} warn${warns == 1 ? '' : 's'}.`);
+  await ctx.replyFmt(
+    `${mentionUser(user, user)} has ${warns} warn${warns == 1 ? "" : "s"}.`,
+  );
 });
 
 export default composer;
