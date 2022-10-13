@@ -15,7 +15,7 @@
  * along with Moderent.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { getSettings, rmwarn, warn } from "$database";
+import { getSettings, getWarns, rmwarn, warn } from "$database";
 import {
   Context,
   getRestrictionParameters,
@@ -84,12 +84,12 @@ filter.command(["warn", "dwarn", "swarn"], rights, async (ctx) => {
   );
 });
 
-filter.command("rmwarn", async (ctx) => {
+filter.command("rmwarn", rights, async (ctx) => {
   const { user, reason } = getRestrictionParameters(ctx, true);
   if (!user) {
     await ctx.reply("Target not specified.");
     return;
-  }else if (
+  } else if (
     ctx.session.admins.has(user) ||
     user == ctx.msg.reply_to_message?.from?.id &&
       ctx.msg.reply_to_message.from.is_bot
@@ -113,12 +113,12 @@ filter.command("rmwarn", async (ctx) => {
   }
 });
 
-filter.command("resetwarn", async (ctx) => {
+filter.command("resetwarn",rights, async (ctx) => {
   const { user, reason } = getRestrictionParameters(ctx, true);
   if (!user) {
     await ctx.reply("Target not specified.");
     return;
-  }else if (
+  } else if (
     ctx.session.admins.has(user) ||
     user == ctx.msg.reply_to_message?.from?.id &&
       ctx.msg.reply_to_message.from.is_bot
@@ -140,6 +140,23 @@ filter.command("resetwarn", async (ctx) => {
   } else {
     await ctx.replyFmt(fmt`${mentionUser(user, user)} has no warnings.`);
   }
+});
+
+filter.command("warns", rights, async (ctx) => {
+  const { user } = getRestrictionParameters(ctx, true);
+  if (!user) {
+    await ctx.reply("Target not specified.");
+    return;
+  } else if (
+    ctx.session.admins.has(user) ||
+    user == ctx.msg.reply_to_message?.from?.id &&
+      ctx.msg.reply_to_message.from.is_bot
+  ) {
+    await ctx.reply("Can\u2019t warn admins or bots.");
+    return;
+  }
+  const warns = await getWarns(user, ctx.chat.id);
+  await ctx.replyFmt(`${mentionUser(user, user)} has ${warns} warns.`);
 });
 
 export default composer;
