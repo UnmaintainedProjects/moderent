@@ -54,7 +54,11 @@ export async function warn(
   chatId: number,
 ): Promise<number> {
   let warns = await getWarns(userId, chatId);
-  await collection.updateOne({ userId, chatId }, { $inc: { warns: 1 } });
+  await collection.updateOne(
+    { userId, chatId },
+    { $inc: { warns: 1 } },
+    { upsert: true },
+  );
   warns++;
   cache.set(`${userId}${chatId}`, warns);
   return warns;
