@@ -23,7 +23,7 @@ import {
 } from "$utilities";
 import { fmt, mentionUser } from "grammy_parse_mode";
 import { Composer } from "grammy";
-import { getSettings, warn } from "../database/mod.ts";
+import { getSettings, unwarn, warn } from "../database/mod.ts";
 
 const composer = new Composer<Context>();
 const filter = composer.chatType("supergroup");
@@ -53,6 +53,7 @@ filter.command("warn", rights, async (ctx) => {
   );
   if (warns == warnLimit) {
     await ctx.banChatMember(user);
+    await unwarn(user, ctx.chat.id, true);
     logRestrictionEvent(
       ctx,
       "BAN",
