@@ -58,7 +58,7 @@ filter.command("warn", rights, async (ctx) => {
       "BAN",
       ctx.from,
       user,
-      `Warn limit reached (${warnLimit})`,
+      `Reason: Warn limit reached (${warnLimit})`,
     );
   }
   await ctx.replyFmt(
