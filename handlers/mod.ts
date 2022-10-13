@@ -21,7 +21,7 @@ import locks from "./locks.ts";
 import logChannels from "./log_channels.ts";
 import messages from "./messages.ts";
 import restrictions from "./restrictions.ts";
-import warns from "./warns.ts"
+import warns from "./warns.ts";
 import { Context } from "$utilities";
 import { autoQuote } from "grammy_autoquote";
 import { Composer } from "grammy";
@@ -38,4 +38,4 @@ composer.use(locks);
 composer.use(logChannels);
 composer.use(messages);
 composer.use(restrictions);
-composer.use(warns)
+composer.use(warns);

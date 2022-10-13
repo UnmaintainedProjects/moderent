@@ -32,7 +32,10 @@ const rights = withRights("can_restrict_members");
 filter.command(["warn", "dwarn", "swarn"], rights, async (ctx) => {
   const command = ctx.msg.text.slice(1, ctx.msg.entities[0].length);
   if (command == "dwarn" && ctx.msg.reply_to_message) {
-    await ctx.api.deleteMessage(ctx.chat.id, ctx.msg.reply_to_message.message_id);
+    await ctx.api.deleteMessage(
+      ctx.chat.id,
+      ctx.msg.reply_to_message.message_id,
+    );
   } else if (command == "swarn") {
     await ctx.deleteMessage();
   }
