@@ -64,12 +64,13 @@ export async function warn(
   return warns;
 }
 
-export async function unwarn(
+export async function rmwarn(
   userId: number,
   chatId: number,
   all?: boolean,
-): Promise<number> {
+): Promise<boolean> {
   let warns = await getWarns(userId, chatId);
+  let removed = false;
   if (warns > 0) {
     if (all) {
       await collection.updateOne({ userId, chatId }, { $set: { warns: 0 } });
@@ -78,7 +79,8 @@ export async function unwarn(
       await collection.updateOne({ userId, chatId }, { $dec: { warns: 1 } });
       warns--;
     }
+    removed = true;
   }
   cache.set(`${userId}${chatId}`, warns);
-  return warns;
+  return removed;
 }

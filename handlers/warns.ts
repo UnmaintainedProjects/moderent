@@ -15,6 +15,7 @@
  * along with Moderent.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+import { getSettings, rmwarn, warn } from "$database";
 import {
   Context,
   getRestrictionParameters,
@@ -23,22 +24,12 @@ import {
 } from "$utilities";
 import { fmt, mentionUser } from "grammy_parse_mode";
 import { Composer } from "grammy";
-import { getSettings, unwarn, warn } from "../database/mod.ts";
 
 const composer = new Composer<Context>();
 const filter = composer.chatType("supergroup");
 const rights = withRights("can_restrict_members");
 
 filter.command(["warn", "dwarn", "swarn"], rights, async (ctx) => {
-  const command = ctx.msg.text.slice(1, ctx.msg.entities[0].length);
-  if (command == "dwarn" && ctx.msg.reply_to_message) {
-    await ctx.api.deleteMessage(
-      ctx.chat.id,
-      ctx.msg.reply_to_message.message_id,
-    );
-  } else if (command == "swarn") {
-    await ctx.deleteMessage();
-  }
   const { user, reason } = getRestrictionParameters(ctx, true);
   if (!user) {
     await ctx.reply("Target not specified.");
@@ -51,6 +42,15 @@ filter.command(["warn", "dwarn", "swarn"], rights, async (ctx) => {
     await ctx.reply("Can\u2019t warn admins or bots.");
     return;
   }
+  const command = ctx.msg.text.slice(1, ctx.msg.entities[0].length);
+  if (command == "dwarn" && ctx.msg.reply_to_message) {
+    await ctx.api.deleteMessage(
+      ctx.chat.id,
+      ctx.msg.reply_to_message.message_id,
+    );
+  } else if (command == "swarn") {
+    await ctx.deleteMessage();
+  }
   const warns = await warn(user, ctx.chat.id);
   const warnLimit = (await getSettings(ctx.chat.id))?.warnLimit ?? 3;
   logRestrictionEvent(
@@ -62,7 +62,7 @@ filter.command(["warn", "dwarn", "swarn"], rights, async (ctx) => {
   );
   if (warns == warnLimit) {
     await ctx.banChatMember(user);
-    await unwarn(user, ctx.chat.id, true);
+    await rmwarn(user, ctx.chat.id, true);
     logRestrictionEvent(
       ctx,
       "BAN",
@@ -82,6 +82,64 @@ filter.command(["warn", "dwarn", "swarn"], rights, async (ctx) => {
         } warn.`
     }`,
   );
+});
+
+filter.command("rmwarn", async (ctx) => {
+  const { user, reason } = getRestrictionParameters(ctx, true);
+  if (!user) {
+    await ctx.reply("Target not specified.");
+    return;
+  }else if (
+    ctx.session.admins.has(user) ||
+    user == ctx.msg.reply_to_message?.from?.id &&
+      ctx.msg.reply_to_message.from.is_bot
+  ) {
+    await ctx.reply("Can\u2019t warn admins or bots.");
+    return;
+  }
+  if (await rmwarn(user, ctx.chat.id)) {
+    logRestrictionEvent(
+      ctx,
+      "RMWARN",
+      ctx.from,
+      user,
+      `Reason: ${reason ?? "Unspecified"}`,
+    );
+    await ctx.replyFmt(
+      fmt`Removed ${mentionUser(user, user)}\u2019s last warning.`,
+    );
+  } else {
+    await ctx.replyFmt(fmt`${mentionUser(user, user)} has no warnings.`);
+  }
+});
+
+filter.command("resetwarn", async (ctx) => {
+  const { user, reason } = getRestrictionParameters(ctx, true);
+  if (!user) {
+    await ctx.reply("Target not specified.");
+    return;
+  }else if (
+    ctx.session.admins.has(user) ||
+    user == ctx.msg.reply_to_message?.from?.id &&
+      ctx.msg.reply_to_message.from.is_bot
+  ) {
+    await ctx.reply("Can\u2019t warn admins or bots.");
+    return;
+  }
+  if (await rmwarn(user, ctx.chat.id, true)) {
+    logRestrictionEvent(
+      ctx,
+      "RESETWARN",
+      ctx.from,
+      user,
+      `Reason: ${reason ?? "Unspecified"}`,
+    );
+    await ctx.replyFmt(
+      fmt`Removed ${mentionUser(user, user)}\u2019s warnings.`,
+    );
+  } else {
+    await ctx.replyFmt(fmt`${mentionUser(user, user)} has no warnings.`);
+  }
 });
 
 export default composer;
