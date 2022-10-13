@@ -113,7 +113,7 @@ filter.command("rmwarn", rights, async (ctx) => {
   }
 });
 
-filter.command("resetwarn",rights, async (ctx) => {
+filter.command("resetwarn", rights, async (ctx) => {
   const { user, reason } = getRestrictionParameters(ctx, true);
   if (!user) {
     await ctx.reply("Target not specified.");
