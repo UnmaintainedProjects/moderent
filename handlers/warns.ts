@@ -15,7 +15,7 @@
  * along with Moderent.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { getSettings, getWarns, rmwarn, warn } from "$database";
+import { getSettings, getWarns, rmwarn, updateSettings, warn } from "$database";
 import {
   Context,
   getRestrictionParameters,
@@ -28,6 +28,7 @@ import { Composer } from "grammy";
 const composer = new Composer<Context>();
 const filter = composer.chatType("supergroup");
 const rights = withRights("can_restrict_members");
+const rights2 = withRights(["can_change_info", "can_restrict_members"]);
 
 filter.command(["warn", "dwarn", "swarn"], rights, async (ctx) => {
   const { user, reason } = getRestrictionParameters(ctx, true);
@@ -159,6 +160,25 @@ filter.command("warns", rights, async (ctx) => {
   await ctx.replyFmt(
     `${mentionUser(user, user)} has ${warns} warn${warns == 1 ? "" : "s"}.`,
   );
+});
+
+filter.command("warnlimit", rights2, async (ctx) => {
+  const warnLimit = Number(ctx.msg.text.split(/\s/));
+  if (isNaN(lwarnLimitimit)) {
+    await ctx.reply("Invalid limit specified.");
+    return;
+  } else if (warnLimit < 2) {
+    await ctx.reply("Warn limit cannot be less than 2.");
+    return;
+  } else if (warnLimit > 10) {
+    await ctx.reply("Warn limit cannot be more than 10.");
+    return;
+  }
+  if (await updateSettings(ctx.chat.id, { warnLimit })) {
+    await ctx.reply("Warn limit changed.");
+  } else {
+    await ctx.reply("Warn limit was not changed.");
+  }
 });
 
 export default composer;
