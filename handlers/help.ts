@@ -83,10 +83,13 @@ These commands let you restrict users with an optional expiration time and reaso
 ${bold("Commands")}
 
 /ban ([user ID]) ([duration]([h|d])) ([reason]) \u2014 bans the target user
-/dban ([user ID]) ([duration]([h|d])) ([reason]) \u2014 bans the target user, silently
+/dban ([user ID]) ([duration]([h|d])) ([reason]) \u2014 bans the target user deleting the replied message
+/sban ([user ID]) ([duration]([h|d])) ([reason]) \u2014 bans the target user deleting both the command and replied messages
 /unban ([user ID]) ([reason]) \u2014 unbans the target user
 /mute ([user ID]) ([duration]([h|d])) ([reason]) \u2014 mutes the target user
 /dmute ([user ID]) ([duration]([h|d])) ([reason]) \u2014 mutes the target user, silently
+/dmute ([user ID]) ([duration]([h|d])) ([reason]) \u2014 bans the target user deleting the replied message
+/smute ([user ID]) ([duration]([h|d])) ([reason]) \u2014 bans the target user deleting both the command and replied messages
 /unmute ([user ID]) ([reason]) \u2014 unmutes the target user
 /kick ([user ID]) ([reason]) \u2014 kicks the target user
 
