@@ -27,7 +27,7 @@ export interface RestrictionParameters {
   user: number;
   untilDate?: number;
   readableUntilDate: string;
-  reason: string;
+  reason?: string;
 }
 
 export function getUntilDate(string: string) {
@@ -55,7 +55,6 @@ export function getRestrictionParameters(
   const params: RestrictionParameters = {
     user: ctx.msg.reply_to_message?.from?.id || 0,
     readableUntilDate: "",
-    reason: "Unspecified",
   };
   let text = removeFirst(ctx.msg.text);
   let firstPart = text.split(/\s/)[0];

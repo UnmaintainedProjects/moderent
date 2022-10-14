@@ -70,7 +70,7 @@ filter.command(["warn", "dwarn", "swarn"], rights, async (ctx) => {
     `WARN ${warns}/${warnLimit}`,
     ctx.from,
     user,
-    `Reason: ${reason}`,
+    reason ? `Reason: ${reason}` : "",
   );
   const other = "Reason: Warn limit reached";
   let rud = "";
@@ -163,7 +163,7 @@ filter.command("rmwarn", rights, async (ctx) => {
       "RMWARN",
       ctx.from,
       user,
-      `Reason: ${reason}`,
+      reason ? `Reason: ${reason}` : "",
     );
     await ctx.replyFmt(
       fmt`Removed ${mentionUser(user, user)}\u2019s last warning.`,
@@ -192,7 +192,7 @@ filter.command("resetwarn", rights, async (ctx) => {
       "RESETWARN",
       ctx.from,
       user,
-      `Reason: ${reason}`,
+      reason ? `Reason: ${reason}` : "",
     );
     await ctx.replyFmt(
       fmt`Removed ${mentionUser(user, user)}\u2019s warnings.`,
