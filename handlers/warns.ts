@@ -85,10 +85,10 @@ filter.command(["warn", "dwarn", "swarn"], rights, async (ctx) => {
   const other = "Reason: Warn limit reached";
   let rud = "";
   if (warns >= warnLimit) {
+    await rmwarn(user, ctx.chat.id, true);
     switch (warnMode) {
       case WarnMode.Ban:
         await ctx.banChatMember(user);
-        await rmwarn(user, ctx.chat.id, true);
         logRestrictionEvent(
           ctx,
           "BAN",
@@ -99,7 +99,6 @@ filter.command(["warn", "dwarn", "swarn"], rights, async (ctx) => {
         break;
       case WarnMode.Mute:
         await ctx.restrictChatMember(user, { can_send_messages: false });
-        await rmwarn(user, ctx.chat.id, true);
         logRestrictionEvent(
           ctx,
           "MUTE",
