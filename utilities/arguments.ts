@@ -17,7 +17,7 @@
 
 import { Context, Filter } from "grammy";
 
-export const timeExp = /^([^0]([0-9]))+(h|d)$/;
+export const timeExp = /^([1-9][0-9]*)+(h|d)$/;
 
 function removeFirst(string: string) {
   return string.slice(string.split(/\s/, 1)[0].length).trim();
@@ -37,7 +37,7 @@ export function getUntilDate(string: string) {
   if (match) {
     string = removeFirst(string);
     const time = Number(match[1]);
-    const unit = match[3];
+    const unit = match[2];
     const toAdd = unit == "h" ? time * 60 ** 2 : time * 60 ** 2 * 24;
     untilDate = Date.now() / 1000 + toAdd;
     readableUntilDate = `${time} ${{ "h": "hour", "d": "day" }[unit]}${
