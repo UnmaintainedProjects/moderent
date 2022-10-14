@@ -232,7 +232,7 @@ filter.command("warns", rights, async (ctx) => {
 });
 
 filter.command("warnlimit", rights2, async (ctx) => {
-  const warnLimit = Number(ctx.msg.text.split(/\s/));
+  const warnLimit = Number(ctx.msg.text.split(/\s/)[1]);
   if (isNaN(warnLimit)) {
     await ctx.reply("Invalid limit specified.");
     return;
