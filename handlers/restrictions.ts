@@ -30,6 +30,7 @@ const filter = composer.chatType("supergroup");
 const rights = withRights("can_restrict_members");
 const rights2 = withRights(["can_restrict_members", "can_delete_messages"]);
 
+// merge ban, dban, sban like warn? same for mute, smute, dmute
 filter.command("ban", rights, async (ctx) => {
   const params = getRestrictionParameters(ctx);
   if (!params.user) {
@@ -39,7 +40,7 @@ filter.command("ban", rights, async (ctx) => {
   await ctx.banChatMember(params.user, { until_date: params.untilDate });
   logRestrictionEvent(
     ctx,
-    "BAN",
+    `BAN${params.readableUntilDate}`,
     ctx.from,
     params.user,
     `Reason: ${params.reason ?? "Unspecified"}`,
@@ -77,12 +78,12 @@ filter.command("dban", rights2, async (ctx) => {
   await ctx.banChatMember(params.user, { until_date: params.untilDate });
   logRestrictionEvent(
     ctx,
-    "BAN",
+    `BAN${params.readableUntilDate}`,
     ctx.from,
     params.user,
     `Reason: ${params.reason ?? "Unspecified"}`,
   );
-  await ctx.deleteMessage();
+  await ctx.deleteMessage(); // this is for sban, not dban
   if (ctx.msg.reply_to_message) {
     await ctx.api.deleteMessage(
       ctx.chat.id,
@@ -97,7 +98,7 @@ filter.command("kick", rights, async (ctx) => {
     await ctx.reply("Target not specified.");
     return;
   }
-  await ctx.banChatMember(params.user, { until_date: params.untilDate });
+  await ctx.banChatMember(params.user);
   await new Promise((r) => setTimeout(r, 1000)); // necessary?
   await ctx.unbanChatMember(params.user);
   logRestrictionEvent(
@@ -107,11 +108,7 @@ filter.command("kick", rights, async (ctx) => {
     params.user,
     `Reason: ${params.reason ?? "Unspecified"}`,
   );
-  await ctx.replyFmt(
-    fmt`Kicked ${
-      mentionUser(params.user, params.user)
-    }${params.readableUntilDate}.`,
-  );
+  await ctx.replyFmt(fmt`Kicked ${mentionUser(params.user, params.user)}.`);
 });
 
 filter.command("dkick", rights2, async (ctx) => {
@@ -149,7 +146,7 @@ filter.command("mute", rights, async (ctx) => {
   });
   logRestrictionEvent(
     ctx,
-    "MUTE",
+    `MUTE${params.readableUntilDate}`,
     ctx.from,
     params.user,
     `Reason: ${params.reason ?? "Unspecified"}`,
@@ -198,7 +195,7 @@ filter.command("dmute", rights, async (ctx) => {
   });
   logRestrictionEvent(
     ctx,
-    "MUTE",
+    `MUTE${params.readableUntilDate}`,
     ctx.from,
     params.user,
     `Reason: ${params.reason ?? "Unspecified"}`,
