@@ -141,9 +141,11 @@ filter.command("mute", rights, async (ctx) => {
     await ctx.reply("Target not specified.");
     return;
   }
-  await ctx.restrictChatMember(params.user, { can_send_messages: false }, {
-    until_date: params.untilDate,
-  });
+  await ctx.restrictChatMember(
+    params.user,
+    { can_send_messages: false },
+    { until_date: params.untilDate },
+  );
   logRestrictionEvent(
     ctx,
     `MUTE${params.readableUntilDate}`,

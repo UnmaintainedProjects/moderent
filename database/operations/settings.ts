@@ -22,14 +22,29 @@ export enum Captcha {
   Emoji = "emoji",
 }
 
+export enum WarnMode {
+  Ban = "ban",
+  Mute = "mute",
+  Tban = "tban",
+  Tmute = "tmute",
+}
+
+export type WarnTDuration = `${number}${"h" | "d"}`;
+
 export interface Settings {
   logChannel?: number | null;
   captcha?: Captcha | null;
   locks?: string[];
   warnLimit: number;
+  warnMode: WarnMode;
+  warnTDuration: WarnTDuration;
 }
 
-const DEFAULT_SETTINGS: Settings = { warnLimit: 3 };
+const DEFAULT_SETTINGS: Settings = {
+  warnLimit: 3,
+  warnMode: WarnMode.Tban,
+  warnTDuration: "1d",
+};
 
 let collection: Collection<Partial<Settings> & { id: number }>;
 const cache = new Map<number, Partial<Settings>>();

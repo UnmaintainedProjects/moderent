@@ -15,11 +15,21 @@
  * along with Moderent.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import { getSettings, getWarns, rmwarn, updateSettings, warn } from "$database";
+import {
+  getSettings,
+  getWarns,
+  rmwarn,
+  updateSettings,
+  warn,
+  WarnMode,
+  WarnTDuration,
+} from "$database";
 import {
   Context,
   getRestrictionParameters,
+  getUntilDate,
   logRestrictionEvent,
+  timeExp,
   withRights,
 } from "$utilities";
 import { fmt, mentionUser } from "grammy_parse_mode";
@@ -53,7 +63,8 @@ filter.command(["warn", "dwarn", "swarn"], rights, async (ctx) => {
     await ctx.deleteMessage();
   }
   const warns = await warn(user, ctx.chat.id);
-  const warnLimit = (await getSettings(ctx.chat.id)).warnLimit;
+  const { warnLimit, warnMode, warnTDuration } =
+    (await getSettings(ctx.chat.id));
   logRestrictionEvent(
     ctx,
     `WARN ${warns}/${warnLimit}`,
@@ -61,16 +72,59 @@ filter.command(["warn", "dwarn", "swarn"], rights, async (ctx) => {
     user,
     `Reason: ${reason}`,
   );
+  const other = "Reason: Warn limit reached";
   if (warns == warnLimit) {
-    await ctx.banChatMember(user);
-    await rmwarn(user, ctx.chat.id, true);
-    logRestrictionEvent(
-      ctx,
-      "BAN",
-      ctx.from,
-      user,
-      "Reason: Warn limit reached",
-    );
+    switch (warnMode) {
+      case WarnMode.Ban:
+        await ctx.banChatMember(user);
+        await rmwarn(user, ctx.chat.id, true);
+        logRestrictionEvent(
+          ctx,
+          "BAN",
+          ctx.from,
+          user,
+          other,
+        );
+        break;
+      case WarnMode.Mute:
+        await ctx.restrictChatMember(user, { can_send_messages: false });
+        await rmwarn(user, ctx.chat.id, true);
+        logRestrictionEvent(
+          ctx,
+          "MUTE",
+          ctx.from,
+          user,
+          other,
+        );
+        break;
+      case WarnMode.Tban: {
+        const { untilDate, readableUntilDate } = getUntilDate(warnTDuration);
+        await ctx.banChatMember(user, { until_date: untilDate });
+        logRestrictionEvent(
+          ctx,
+          `BAN${readableUntilDate}`,
+          ctx.from,
+          user,
+          other,
+        );
+        break;
+      }
+      case WarnMode.Tmute: {
+        const { untilDate, readableUntilDate } = getUntilDate(warnTDuration);
+        await ctx.restrictChatMember(
+          user,
+          { can_send_messages: false },
+          { until_date: untilDate },
+        );
+        logRestrictionEvent(
+          ctx,
+          `MUTE${readableUntilDate}`,
+          ctx.from,
+          user,
+          other,
+        );
+      }
+    }
   }
   await ctx.replyFmt(
     fmt`${mentionUser(user, user)} was warned${
@@ -178,6 +232,39 @@ filter.command("warnlimit", rights2, async (ctx) => {
     await ctx.reply("Warn limit changed.");
   } else {
     await ctx.reply("Warn limit was not changed.");
+  }
+});
+
+filter.command("warnmode", rights2, async (ctx) => {
+  const args = ctx.msg.text.split(/\s/);
+  const warnMode = args[1];
+  const warnTDuration = args[2];
+  if (!warnMode) {
+    await ctx.reply("Warn mode not specified.");
+  } else if (["tban", "tmute"].includes(warnMode)) {
+    if (!warnTDuration) {
+      await ctx.reply("Duration not specified.");
+      return;
+    } else if (!timeExp.test(warnTDuration)) {
+      await ctx.reply("Invalid duration specified.");
+      return;
+    }
+  } else if (!["ban", "mute"].includes(warnMode)) {
+    await ctx.reply("Invalid warn mode specified.");
+    return;
+  }
+  if (
+    await updateSettings(
+      ctx.chat.id,
+      {
+        warnMode: warnMode as WarnMode,
+        warnTDuration: warnTDuration as WarnTDuration,
+      },
+    )
+  ) {
+    await ctx.reply("Warn mode changed.");
+  } else {
+    await ctx.reply("Warn mode was not changed.");
   }
 });
 
