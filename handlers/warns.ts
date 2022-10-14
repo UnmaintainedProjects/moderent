@@ -246,6 +246,7 @@ filter.command("warnmode", rights2, async (ctx) => {
   const warnTDuration = args[2];
   if (!warnMode) {
     await ctx.reply("Warn mode not specified.");
+    return;
   } else if (["tban", "tmute"].includes(warnMode)) {
     if (!warnTDuration) {
       await ctx.reply("Duration not specified.");
