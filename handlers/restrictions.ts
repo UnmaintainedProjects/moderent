@@ -28,30 +28,39 @@ import { Composer } from "grammy";
 const composer = new Composer<Context>();
 const filter = composer.chatType("supergroup");
 const rights = withRights("can_restrict_members");
-const rights2 = withRights([
-  "can_restrict_members",
-  "can_delete_messages",
-]);
+const rights2 = withRights(["can_restrict_members", "can_delete_messages"]);
 
-filter.command("ban", rights, async (ctx) => {
+// merge ban, dban, sban like warn? same for mute, smute, dmute
+filter.command(["ban", "dban", "sban"], rights, async (ctx) => {
   const params = getRestrictionParameters(ctx);
   if (!params.user) {
     await ctx.reply("Target not specified.");
     return;
   }
+  const command = ctx.msg.text.slice(1, ctx.msg.entities[0].length);
+  if (command.startsWith("d") && ctx.msg.reply_to_message) {
+    await ctx.api.deleteMessage(
+      ctx.chat.id,
+      ctx.msg.reply_to_message.message_id,
+    );
+  }
   await ctx.banChatMember(params.user, { until_date: params.untilDate });
   logRestrictionEvent(
     ctx,
-    "BAN",
+    `BAN${params.readableUntilDate}`,
     ctx.from,
     params.user,
-    fmt`Reason: ${params.reason ?? "Unspecified"}`,
+    `Reason: ${params.reason}`,
   );
-  await ctx.replyFmt(
-    fmt`Banned ${
-      mentionUser(params.user, params.user)
-    }${params.readableUntilDate}.`,
-  );
+  if (!command.startsWith("s")) {
+    await ctx.replyFmt(
+      fmt`Banned ${
+        mentionUser(params.user, params.user)
+      }${params.readableUntilDate}.`,
+    );
+  } else {
+    await ctx.deleteMessage();
+  }
 });
 
 filter.command("unban", rights, async (ctx) => {
@@ -66,32 +75,9 @@ filter.command("unban", rights, async (ctx) => {
     "UNBAN",
     ctx.from,
     params.user,
-    fmt`Reason: ${params.reason ?? "Unspecified"}`,
+    `Reason: ${params.reason}`,
   );
   await ctx.replyFmt(fmt`Unbanned ${mentionUser(params.user, params.user)}.`);
-});
-
-filter.command("dban", rights2, async (ctx) => {
-  const params = getRestrictionParameters(ctx);
-  if (!params.user) {
-    await ctx.reply("Target not specified.");
-    return;
-  }
-  await ctx.banChatMember(params.user, { until_date: params.untilDate });
-  logRestrictionEvent(
-    ctx,
-    "BAN",
-    ctx.from,
-    params.user,
-    fmt`Reason: ${params.reason ?? "Unspecified"}`,
-  );
-  await ctx.deleteMessage();
-  if (ctx.msg.reply_to_message) {
-    await ctx.api.deleteMessage(
-      ctx.chat.id,
-      ctx.msg.reply_to_message.message_id,
-    );
-  }
 });
 
 filter.command("kick", rights, async (ctx) => {
@@ -100,7 +86,7 @@ filter.command("kick", rights, async (ctx) => {
     await ctx.reply("Target not specified.");
     return;
   }
-  await ctx.banChatMember(params.user, { until_date: params.untilDate });
+  await ctx.banChatMember(params.user);
   await new Promise((r) => setTimeout(r, 1000)); // necessary?
   await ctx.unbanChatMember(params.user);
   logRestrictionEvent(
@@ -108,13 +94,9 @@ filter.command("kick", rights, async (ctx) => {
     "KICK",
     ctx.from,
     params.user,
-    fmt`Reason: ${params.reason ?? "Unspecified"}`,
+    `Reason: ${params.reason}`,
   );
-  await ctx.replyFmt(
-    fmt`Kicked ${
-      mentionUser(params.user, params.user)
-    }${params.readableUntilDate}.`,
-  );
+  await ctx.replyFmt(fmt`Kicked ${mentionUser(params.user, params.user)}.`);
 });
 
 filter.command("dkick", rights2, async (ctx) => {
@@ -131,7 +113,7 @@ filter.command("dkick", rights2, async (ctx) => {
     "KICK",
     ctx.from,
     params.user,
-    fmt`Reason: ${params.reason ?? "Unspecified"}`,
+    `Reason: ${params.reason}`,
   );
   if (ctx.msg.reply_to_message) {
     await ctx.api.deleteMessage(
@@ -141,27 +123,40 @@ filter.command("dkick", rights2, async (ctx) => {
   }
 });
 
-filter.command("mute", rights, async (ctx) => {
+filter.command(["mute", "dmute", "smute"], rights, async (ctx) => {
   const params = getRestrictionParameters(ctx);
   if (!params.user) {
     await ctx.reply("Target not specified.");
     return;
   }
-  await ctx.restrictChatMember(params.user, { can_send_messages: false }, {
-    until_date: params.untilDate,
-  });
+  const command = ctx.msg.text.slice(1, ctx.msg.entities[0].length);
+  if (command.startsWith("d") && ctx.msg.reply_to_message) {
+    await ctx.api.deleteMessage(
+      ctx.chat.id,
+      ctx.msg.reply_to_message.message_id,
+    );
+  }
+  await ctx.restrictChatMember(
+    params.user,
+    { can_send_messages: false },
+    { until_date: params.untilDate },
+  );
   logRestrictionEvent(
     ctx,
-    "MUTE",
+    `MUTE${params.readableUntilDate}`,
     ctx.from,
     params.user,
-    fmt`Reason: ${params.reason ?? "Unspecified"}`,
+    `Reason: ${params.reason}`,
   );
-  await ctx.replyFmt(
-    fmt`Muted ${
-      mentionUser(params.user, params.user)
-    }${params.readableUntilDate}.`,
-  );
+  if (!command.startsWith("s")) {
+    await ctx.replyFmt(
+      fmt`Muted ${
+        mentionUser(params.user, params.user)
+      }${params.readableUntilDate}.`,
+    );
+  } else {
+    await ctx.deleteMessage();
+  }
 });
 
 filter.command("unmute", rights, async (ctx) => {
@@ -170,49 +165,27 @@ filter.command("unmute", rights, async (ctx) => {
     await ctx.reply("Target not specified.");
     return;
   }
-  await ctx.restrictChatMember(params.user, {
-    can_send_polls: true,
-    can_change_info: true,
-    can_invite_users: true,
-    can_pin_messages: true,
-    can_send_messages: true,
-    can_send_media_messages: true,
-    can_send_other_messages: true,
-    can_add_web_page_previews: true,
-  });
+  await ctx.restrictChatMember(
+    params.user,
+    {
+      can_send_polls: true,
+      can_change_info: true,
+      can_invite_users: true,
+      can_pin_messages: true,
+      can_send_messages: true,
+      can_send_media_messages: true,
+      can_send_other_messages: true,
+      can_add_web_page_previews: true,
+    },
+  );
   logRestrictionEvent(
     ctx,
     "UNMUTE",
     ctx.from,
     params.user,
-    fmt`Reason: ${params.reason ?? "Unspecified"}`,
+    `Reason: ${params.reason}`,
   );
   await ctx.replyFmt(`Unmuted ${mentionUser(params.user, params.user)}.`);
-});
-
-filter.command("dmute", rights, async (ctx) => {
-  const params = getRestrictionParameters(ctx);
-  if (!params.user) {
-    await ctx.reply("Target not specified.");
-    return;
-  }
-  await ctx.restrictChatMember(params.user, { can_send_messages: false }, {
-    until_date: params.untilDate,
-  });
-  logRestrictionEvent(
-    ctx,
-    "MUTE",
-    ctx.from,
-    params.user,
-    fmt`Reason: ${params.reason ?? "Unspecified"}`,
-  );
-  await ctx.deleteMessage();
-  if (ctx.msg.reply_to_message) {
-    await ctx.api.deleteMessage(
-      ctx.chat.id,
-      ctx.msg.reply_to_message.message_id,
-    );
-  }
 });
 
 filter.on("chat_member", (ctx) => {

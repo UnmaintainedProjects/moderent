@@ -17,7 +17,7 @@
 
 import { Context, Filter } from "grammy";
 
-const timeExp = /^([1-9])+(h|d)$/;
+export const timeExp = /^([1-9][0-9]*)+(h|d)$/;
 
 function removeFirst(string: string) {
   return string.slice(string.split(/\s/, 1)[0].length).trim();
@@ -28,6 +28,26 @@ export interface RestrictionParameters {
   untilDate?: number;
   readableUntilDate: string;
   reason?: string;
+}
+
+export function getUntilDate(string: string) {
+  const match = string.match(timeExp);
+  let untilDate = 0;
+  let readableUntilDate = "";
+  if (match) {
+    string = removeFirst(string);
+    const time = Number(match[1]);
+    if (time >= 1 && time <= 365) {
+      const unit = match[2];
+      const toAdd = unit == "h" ? time * 60 ** 2 : time * 60 ** 2 * 24;
+      untilDate = Date.now() / 1000 + toAdd;
+      readableUntilDate = `${time} ${{ "h": "hour", "d": "day" }[unit]}${
+        time == 1 ? "" : "s"
+      }`;
+      readableUntilDate = readableUntilDate ? ` for ${readableUntilDate}` : "";
+    }
+  }
+  return { untilDate, readableUntilDate };
 }
 
 export function getRestrictionParameters(
@@ -47,19 +67,11 @@ export function getRestrictionParameters(
   }
   firstPart = text.split(/\s/)[0];
   if (!noUntilDate) {
-    const match = firstPart.match(timeExp);
-    if (match) {
+    const { untilDate, readableUntilDate } = getUntilDate(firstPart);
+    if (readableUntilDate) {
       text = removeFirst(text);
-      const time = Number(match[1]);
-      const unit = match[2];
-      const toAdd = unit == "h" ? time * 60 ** 2 : time * 60 ** 2 * 24;
-      params.untilDate = Date.now() / 1000 + toAdd;
-      const readableUntilDate = `${time} ${{ "h": "hour", "d": "day" }[unit]}${
-        time == 1 ? "" : "s"
-      }`;
-      params.readableUntilDate = readableUntilDate
-        ? " for " + readableUntilDate
-        : "";
+      params.untilDate = untilDate;
+      params.readableUntilDate = readableUntilDate;
     }
   }
   if (text) {

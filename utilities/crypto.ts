@@ -46,7 +46,9 @@ export async function base64EncryptAesCbcWithIv(decrypted: string) {
 
 export async function base64DecryptAesCbcWithIv(encrypted: string) {
   let buffer = new Uint8Array(
-    atob(encrypted).split("").map((v) => v.charCodeAt(0)),
+    atob(encrypted)
+      .split("")
+      .map((v) => v.charCodeAt(0)),
   );
   const iv = buffer.slice(-16, buffer.length);
   buffer = buffer.slice(0, -16);

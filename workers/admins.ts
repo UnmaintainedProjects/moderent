@@ -27,11 +27,11 @@ const filter = composer.chatType("supergroup");
 
 filter.use(async (ctx, next) => {
   if (ctx.session.admins.size == 0) {
-    (await ctx.getChatAdministrators()).filter((
-      v,
-    ): v is ChatMemberOwner | ChatMemberAdministrator =>
-      v.status == "creator" || v.status == "administrator"
-    ).forEach((v) => ctx.session.admins.set(v.user.id, v));
+    (await ctx.getChatAdministrators())
+      .filter((v): v is ChatMemberOwner | ChatMemberAdministrator =>
+        v.status == "creator" || v.status == "administrator"
+      )
+      .forEach((v) => ctx.session.admins.set(v.user.id, v));
   }
   await next();
 });

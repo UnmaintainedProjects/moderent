@@ -32,9 +32,11 @@ export function log(ctx: LogContext, text: FormattedString) {
   Promise.resolve().then(async () => {
     const { logChannel } = await getSettings(ctx.chat.id);
     if (logChannel) {
-      await ctx.api.sendMessage(logChannel, text.toString(), {
-        entities: text.entities,
-      });
+      await ctx.api.sendMessage(
+        logChannel,
+        text.toString(),
+        { entities: text.entities },
+      );
     }
   }).catch((err) => {
     console.error("failed to log an action", err);

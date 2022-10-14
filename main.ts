@@ -45,10 +45,10 @@ if (env.USE_WEBHOOK) {
   bot.start({
     drop_pending_updates: true,
     allowed_updates: [
-      "message",
       "callback_query",
-      "chat_member",
       "chat_join_request",
+      "chat_member",
+      "message",
     ],
   });
 }
