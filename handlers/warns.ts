@@ -60,7 +60,7 @@ filter.command(["warn", "dwarn", "swarn"], rights, async (ctx) => {
     //
   }
   if (!isMember) {
-    await ctx.reply("The target user in not a member.");
+    await ctx.reply("The target user is not a member.");
     return;
   }
   const command = ctx.msg.text.slice(1, ctx.msg.entities[0].length);
