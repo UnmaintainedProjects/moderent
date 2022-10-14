@@ -29,7 +29,6 @@ import {
   getRestrictionParameters,
   getUntilDate,
   logRestrictionEvent,
-  timeExp,
   withRights,
 } from "$utilities";
 import { fmt, mentionUser } from "grammy_parse_mode";
@@ -262,7 +261,7 @@ filter.command("warnmode", rights2, async (ctx) => {
     if (!warnTDuration) {
       await ctx.reply("Duration not specified.");
       return;
-    } else if (!timeExp.test(warnTDuration)) {
+    } else if (!getUntilDate(warnTDuration).readableUntilDate) {
       await ctx.reply("Invalid duration specified.");
       return;
     }
