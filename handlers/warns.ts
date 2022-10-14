@@ -73,6 +73,7 @@ filter.command(["warn", "dwarn", "swarn"], rights, async (ctx) => {
     `Reason: ${reason}`,
   );
   const other = "Reason: Warn limit reached";
+  let rud = "";
   if (warns == warnLimit) {
     switch (warnMode) {
       case WarnMode.Ban:
@@ -99,6 +100,7 @@ filter.command(["warn", "dwarn", "swarn"], rights, async (ctx) => {
         break;
       case WarnMode.Tban: {
         const { untilDate, readableUntilDate } = getUntilDate(warnTDuration);
+        rud = readableUntilDate;
         await ctx.banChatMember(user, { until_date: untilDate });
         logRestrictionEvent(
           ctx,
@@ -111,6 +113,7 @@ filter.command(["warn", "dwarn", "swarn"], rights, async (ctx) => {
       }
       case WarnMode.Tmute: {
         const { untilDate, readableUntilDate } = getUntilDate(warnTDuration);
+        rud = readableUntilDate;
         await ctx.restrictChatMember(
           user,
           { can_send_messages: false },
@@ -131,7 +134,9 @@ filter.command(["warn", "dwarn", "swarn"], rights, async (ctx) => {
       reason ? ` for:\n${reason}\n\n` : ". "
     }${
       warns == warnLimit
-        ? fmt`This was the last warn. ${mentionUser(user, user)} was banned.`
+        ? fmt`This was the last warn. ${mentionUser(user, user)} was ${
+          warnMode.includes("ban") ? "bann" : "mute"
+        }ed${rud}.`
         : `This is the ${warns}${
           warns == 1 ? "st" : warns == 2 ? "nd" : warns == 3 ? "rd" : "st"
         } warn.`
