@@ -31,11 +31,18 @@ const rights = withRights("can_restrict_members");
 const rights2 = withRights(["can_restrict_members", "can_delete_messages"]);
 
 // merge ban, dban, sban like warn? same for mute, smute, dmute
-filter.command("ban", rights, async (ctx) => {
+filter.command(["ban", "dban", "sban"], rights, async (ctx) => {
   const params = getRestrictionParameters(ctx);
   if (!params.user) {
     await ctx.reply("Target not specified.");
     return;
+  }
+  const command = ctx.msg.text.slice(1, ctx.msg.entities[0].length);
+  if (command.startsWith("d") && ctx.msg.reply_to_message) {
+    await ctx.api.deleteMessage(
+      ctx.chat.id,
+      ctx.msg.reply_to_message.message_id,
+    );
   }
   await ctx.banChatMember(params.user, { until_date: params.untilDate });
   logRestrictionEvent(
@@ -45,11 +52,13 @@ filter.command("ban", rights, async (ctx) => {
     params.user,
     `Reason: ${params.reason}`,
   );
-  await ctx.replyFmt(
-    fmt`Banned ${
-      mentionUser(params.user, params.user)
-    }${params.readableUntilDate}.`,
-  );
+  if (!command.startsWith("s")) {
+    await ctx.replyFmt(
+      fmt`Banned ${
+        mentionUser(params.user, params.user)
+      }${params.readableUntilDate}.`,
+    );
+  }
 });
 
 filter.command("unban", rights, async (ctx) => {
@@ -67,29 +76,6 @@ filter.command("unban", rights, async (ctx) => {
     `Reason: ${params.reason}`,
   );
   await ctx.replyFmt(fmt`Unbanned ${mentionUser(params.user, params.user)}.`);
-});
-
-filter.command("dban", rights2, async (ctx) => {
-  const params = getRestrictionParameters(ctx);
-  if (!params.user) {
-    await ctx.reply("Target not specified.");
-    return;
-  }
-  await ctx.banChatMember(params.user, { until_date: params.untilDate });
-  logRestrictionEvent(
-    ctx,
-    `BAN${params.readableUntilDate}`,
-    ctx.from,
-    params.user,
-    `Reason: ${params.reason}`,
-  );
-  await ctx.deleteMessage(); // this is for sban, not dban
-  if (ctx.msg.reply_to_message) {
-    await ctx.api.deleteMessage(
-      ctx.chat.id,
-      ctx.msg.reply_to_message.message_id,
-    );
-  }
 });
 
 filter.command("kick", rights, async (ctx) => {
@@ -135,11 +121,18 @@ filter.command("dkick", rights2, async (ctx) => {
   }
 });
 
-filter.command("mute", rights, async (ctx) => {
+filter.command(["mute", "dmute", "smute"], rights, async (ctx) => {
   const params = getRestrictionParameters(ctx);
   if (!params.user) {
     await ctx.reply("Target not specified.");
     return;
+  }
+  const command = ctx.msg.text.slice(1, ctx.msg.entities[0].length);
+  if (command.startsWith("d") && ctx.msg.reply_to_message) {
+    await ctx.api.deleteMessage(
+      ctx.chat.id,
+      ctx.msg.reply_to_message.message_id,
+    );
   }
   await ctx.restrictChatMember(
     params.user,
@@ -153,11 +146,13 @@ filter.command("mute", rights, async (ctx) => {
     params.user,
     `Reason: ${params.reason}`,
   );
-  await ctx.replyFmt(
-    fmt`Muted ${
-      mentionUser(params.user, params.user)
-    }${params.readableUntilDate}.`,
-  );
+  if (!command.startsWith("s")) {
+    await ctx.replyFmt(
+      fmt`Muted ${
+        mentionUser(params.user, params.user)
+      }${params.readableUntilDate}.`,
+    );
+  }
 });
 
 filter.command("unmute", rights, async (ctx) => {
@@ -166,16 +161,19 @@ filter.command("unmute", rights, async (ctx) => {
     await ctx.reply("Target not specified.");
     return;
   }
-  await ctx.restrictChatMember(params.user, {
-    can_send_polls: true,
-    can_change_info: true,
-    can_invite_users: true,
-    can_pin_messages: true,
-    can_send_messages: true,
-    can_send_media_messages: true,
-    can_send_other_messages: true,
-    can_add_web_page_previews: true,
-  });
+  await ctx.restrictChatMember(
+    params.user,
+    {
+      can_send_polls: true,
+      can_change_info: true,
+      can_invite_users: true,
+      can_pin_messages: true,
+      can_send_messages: true,
+      can_send_media_messages: true,
+      can_send_other_messages: true,
+      can_add_web_page_previews: true,
+    },
+  );
   logRestrictionEvent(
     ctx,
     "UNMUTE",
@@ -184,31 +182,6 @@ filter.command("unmute", rights, async (ctx) => {
     `Reason: ${params.reason}`,
   );
   await ctx.replyFmt(`Unmuted ${mentionUser(params.user, params.user)}.`);
-});
-
-filter.command("dmute", rights, async (ctx) => {
-  const params = getRestrictionParameters(ctx);
-  if (!params.user) {
-    await ctx.reply("Target not specified.");
-    return;
-  }
-  await ctx.restrictChatMember(params.user, { can_send_messages: false }, {
-    until_date: params.untilDate,
-  });
-  logRestrictionEvent(
-    ctx,
-    `MUTE${params.readableUntilDate}`,
-    ctx.from,
-    params.user,
-    `Reason: ${params.reason}`,
-  );
-  await ctx.deleteMessage();
-  if (ctx.msg.reply_to_message) {
-    await ctx.api.deleteMessage(
-      ctx.chat.id,
-      ctx.msg.reply_to_message.message_id,
-    );
-  }
 });
 
 filter.on("chat_member", (ctx) => {
