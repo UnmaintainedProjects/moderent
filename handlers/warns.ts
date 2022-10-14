@@ -84,7 +84,7 @@ filter.command(["warn", "dwarn", "swarn"], rights, async (ctx) => {
   );
   const other = "Reason: Warn limit reached";
   let rud = "";
-  if (warns == warnLimit) {
+  if (warns >= warnLimit) {
     switch (warnMode) {
       case WarnMode.Ban:
         await ctx.banChatMember(user);
