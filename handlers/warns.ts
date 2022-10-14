@@ -145,7 +145,7 @@ filter.command(["warn", "dwarn", "swarn"], rights, async (ctx) => {
     }${
       warns == warnLimit
         ? fmt`This was the last warn. ${mentionUser(user, user)} was ${
-          warnMode.includes("ban") ? "bann" : "mute"
+          warnMode.includes("ban") ? "bann" : "mut"
         }ed${rud}.`
         : `This is the ${warns}${
           warns == 1 ? "st" : warns == 2 ? "nd" : warns == 3 ? "rd" : "st"
