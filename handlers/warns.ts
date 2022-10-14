@@ -148,7 +148,7 @@ filter.command(["warn", "dwarn", "swarn"], rights, async (ctx) => {
           warnMode.includes("ban") ? "bann" : "mut"
         }ed${rud}.`
         : `This is the ${warns}${
-          warns == 1 ? "st" : warns == 2 ? "nd" : warns == 3 ? "rd" : "st"
+          warns == 1 ? "st" : warns == 2 ? "nd" : warns == 3 ? "rd" : "th"
         } warn.`
     }`,
   );
