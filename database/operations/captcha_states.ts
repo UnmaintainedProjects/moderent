@@ -66,10 +66,10 @@ export async function updateCaptchaState(
   }, {
     upsert: true,
   });
-  cache.set(`${userId}${chatId}`, {
-    ...cache.get(`${userId}${chatId}`) ?? {},
-    ...state,
-  });
+  cache.set(
+    `${userId}${chatId}`,
+    { ...cache.get(`${userId}${chatId}`) ?? {}, ...state },
+  );
   return result.modifiedCount + result.upsertedCount > 0;
 }
 

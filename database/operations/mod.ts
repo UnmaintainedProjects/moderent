@@ -18,15 +18,18 @@
 import { initializeCaptchaStates } from "./captcha_states.ts";
 import { initializeKv } from "./kv.ts";
 import { initializeSettings } from "./settings.ts";
+import { initializeWarns } from "./warns.ts";
 
 export function initialize() {
   return Promise.all([
     initializeCaptchaStates(),
     initializeKv(),
     initializeSettings(),
+    initializeWarns(),
   ]);
 }
 
 export * from "./captcha_states.ts";
 export * from "./kv.ts";
 export * from "./settings.ts";
+export * from "./warns.ts";

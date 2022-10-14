@@ -75,17 +75,21 @@ ${bold("Commands")}
 ${bold("Notes")}
 
 \u2014 /pin and /unpin require the right to pin messages.`,
+
   "Restrictions": fmt`${bold("Restrictions")}
 
 These commands let you restrict users with an optional expiration time and reason.
 
 ${bold("Commands")}
 
-/ban ([user ID]) ([duration]([h|d])) ([reason]) - bans the target user
-/dban ([user ID]) ([duration]([h|d])) ([reason]) \u2014 bans the target user, silently
+/ban ([user ID]) ([duration]([h|d])) ([reason]) \u2014 bans the target user
+/dban ([user ID]) ([duration]([h|d])) ([reason]) \u2014 bans the target user deleting the replied message
+/sban ([user ID]) ([duration]([h|d])) ([reason]) \u2014 bans the target user deleting both the command and replied messages
 /unban ([user ID]) ([reason]) \u2014 unbans the target user
 /mute ([user ID]) ([duration]([h|d])) ([reason]) \u2014 mutes the target user
 /dmute ([user ID]) ([duration]([h|d])) ([reason]) \u2014 mutes the target user, silently
+/dmute ([user ID]) ([duration]([h|d])) ([reason]) \u2014 bans the target user deleting the replied message
+/smute ([user ID]) ([duration]([h|d])) ([reason]) \u2014 bans the target user deleting both the command and replied messages
 /unmute ([user ID]) ([reason]) \u2014 unmutes the target user
 /kick ([user ID]) ([reason]) \u2014 kicks the target user
 
@@ -95,6 +99,27 @@ ${bold("Notes")}
 \u2014 The commands starting with "d" require the right to delete messages as well.
 \u2014 The [user ID] parameter is required if not replying to a message.
 \u2014 The [duration] parameter lets you set a time for the restriction to automatically revert, in seconds, or in hours or days if you use one of the h or d suffixes.`,
+
+  "Warns": fmt`${bold("Warns")}
+
+Warning users can let you keep their behavior in control without directly restricting them.
+
+${bold("Commands")}
+
+/warn ([user ID]) ([duration]([h|d])) ([reason]) \u2014 warns the target user
+/dwarn ([user ID]) ([duration]([h|d])) ([reason]) \u2014 warns the target user deleting the replied message
+/swarn ([user ID]) ([duration]([h|d])) ([reason]) \u2014 warns the target user deleting both the command and replied messages
+/rmwarn ([user ID]) ([reason]) \u2014 removes the target user\u2019s last warning
+/resetwarn ([user ID]) ([reason]) \u2014 removes the target user\u2019s warnings
+/warnmode ([ban|mute|[[tban|tmute] [duration]([h|d])]])  \u2014 sets the warn mode, the action taken on when exceeding warn limit
+/warnlimit ([limit]) \u2014 changes the warn limit
+/warns ([user ID]) \u2014 shows target user\u2019s warns
+
+${bold("Notes")}
+
+\u2014 The above commands require the right to restrict members
+\u2014 The commands /warnmode and /warnlimit require the right to change info as well.
+\u2014 The [user ID] parameter is required if not replying to a message.`,
 };
 
 const home = fmt`Moderent lets you ${underline("mod")}erate your groups diff${
@@ -120,35 +145,38 @@ filter.callbackQuery(/^help_(.+)$/, async (ctx) => {
   if (!help) {
     return;
   }
-  await ctx.editMessageText(help.text, {
-    entities: help.entities,
-    reply_markup: new InlineKeyboard().text("Back", "back"),
-  });
+  await ctx.editMessageText(
+    help.text,
+    {
+      entities: help.entities,
+      reply_markup: new InlineKeyboard().text("Back", "back"),
+    },
+  );
 });
 
 filter.callbackQuery("back", async (ctx) => {
   await ctx.answerCallbackQuery();
-  await ctx.editMessageText(home.text, {
-    entities: home.entities,
-    reply_markup: homeKeyboard,
-  });
+  await ctx.editMessageText(
+    home.text,
+    { entities: home.entities, reply_markup: homeKeyboard },
+  );
 });
 
 filter.command("help", async (ctx) => {
-  await ctx.replyFmt(home.text, {
-    entities: home.entities,
-    reply_markup: homeKeyboard,
-  });
+  await ctx.replyFmt(
+    home.text,
+    { entities: home.entities, reply_markup: homeKeyboard },
+  );
 });
 
 filter.command(
   "start",
   (ctx) =>
     ctx.msg.text.includes("help")
-      ? ctx.replyFmt(home.text, {
-        entities: home.entities,
-        reply_markup: homeKeyboard,
-      })
+      ? ctx.replyFmt(
+        home.text,
+        { entities: home.entities, reply_markup: homeKeyboard },
+      )
       : ctx.replyFmt(
         fmt`I\u2019m Moderent \u2014 the diff${underline("erent")} way to ${
           underline("mod")
@@ -177,12 +205,15 @@ filter2.command(
 filter2.command(
   "help",
   (ctx) =>
-    ctx.reply("Use the button below read the help in private chat.", {
-      reply_markup: new InlineKeyboard().url(
-        "Help",
-        `https://t.me/${ctx.me.username}?start=help`,
-      ),
-    }),
+    ctx.reply(
+      "Use the button below read the help in private chat.",
+      {
+        reply_markup: new InlineKeyboard().url(
+          "Help",
+          `https://t.me/${ctx.me.username}?start=help`,
+        ),
+      },
+    ),
 );
 
 export default composer;

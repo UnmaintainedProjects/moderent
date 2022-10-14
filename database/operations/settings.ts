@@ -22,14 +22,32 @@ export enum Captcha {
   Emoji = "emoji",
 }
 
+export enum WarnMode {
+  Ban = "ban",
+  Mute = "mute",
+  Tban = "tban",
+  Tmute = "tmute",
+}
+
+export type WarnTDuration = `${number}${"h" | "d"}`;
+
 export interface Settings {
   logChannel?: number | null;
   captcha?: Captcha | null;
   locks?: string[];
+  warnLimit: number;
+  warnMode: WarnMode;
+  warnTDuration: WarnTDuration;
 }
 
-let collection: Collection<Settings & { id: number }>;
-const cache = new Map<number, Settings>();
+const DEFAULT_SETTINGS: Settings = {
+  warnLimit: 3,
+  warnMode: WarnMode.Tban,
+  warnTDuration: "1d",
+};
+
+let collection: Collection<Partial<Settings> & { id: number }>;
+const cache = new Map<number, Partial<Settings>>();
 
 export function initializeSettings() {
   collection = database.collection("settings");
@@ -50,13 +68,15 @@ export async function getSettings(id: number): Promise<Settings> {
     settings = await collection.findOne({ id }) ?? {};
     cache.set(id, settings);
   }
-  return settings ?? {};
+  return { ...DEFAULT_SETTINGS, ...settings };
 }
 
-export async function updateSettings(id: number, settings: Settings) {
-  const result = await collection.updateOne({ id }, { $set: { ...settings } }, {
-    upsert: true,
-  });
+export async function updateSettings(id: number, settings: Partial<Settings>) {
+  const result = await collection.updateOne(
+    { id },
+    { $set: { ...settings } },
+    { upsert: true },
+  );
   cache.set(id, { ...cache.get(id) ?? {}, ...settings });
   return result.modifiedCount + result.upsertedCount > 0;
 }
