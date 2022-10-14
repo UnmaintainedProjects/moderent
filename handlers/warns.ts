@@ -53,6 +53,17 @@ filter.command(["warn", "dwarn", "swarn"], rights, async (ctx) => {
     await ctx.reply("Can\u2019t warn admins or bots.");
     return;
   }
+  let isMember = false;
+  try {
+    isMember = ["member", "restricted"]
+      .includes((await ctx.getChatMember(user)).status);
+  } catch (_err) {
+    //
+  }
+  if (!isMember) {
+    await ctx.reply("The target user in not a member.");
+    return;
+  }
   const command = ctx.msg.text.slice(1, ctx.msg.entities[0].length);
   if (command == "dwarn" && ctx.msg.reply_to_message) {
     await ctx.api.deleteMessage(
