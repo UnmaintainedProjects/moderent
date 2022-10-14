@@ -164,7 +164,7 @@ filter.command("warns", rights, async (ctx) => {
 
 filter.command("warnlimit", rights2, async (ctx) => {
   const warnLimit = Number(ctx.msg.text.split(/\s/));
-  if (isNaN(lwarnLimitimit)) {
+  if (isNaN(warnLimit)) {
     await ctx.reply("Invalid limit specified.");
     return;
   } else if (warnLimit < 2) {
