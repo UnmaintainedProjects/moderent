@@ -58,6 +58,8 @@ filter.command(["ban", "dban", "sban"], rights, async (ctx) => {
         mentionUser(params.user, params.user)
       }${params.readableUntilDate}.`,
     );
+  } else {
+    await ctx.deleteMessage();
   }
 });
 
@@ -152,6 +154,8 @@ filter.command(["mute", "dmute", "smute"], rights, async (ctx) => {
         mentionUser(params.user, params.user)
       }${params.readableUntilDate}.`,
     );
+  } else {
+    await ctx.deleteMessage();
   }
 });
 
