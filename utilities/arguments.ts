@@ -37,13 +37,15 @@ export function getUntilDate(string: string) {
   if (match) {
     string = removeFirst(string);
     const time = Number(match[1]);
-    const unit = match[2];
-    const toAdd = unit == "h" ? time * 60 ** 2 : time * 60 ** 2 * 24;
-    untilDate = Date.now() / 1000 + toAdd;
-    readableUntilDate = `${time} ${{ "h": "hour", "d": "day" }[unit]}${
-      time == 1 ? "" : "s"
-    }`;
-    readableUntilDate = readableUntilDate ? ` for ${readableUntilDate}` : "";
+    if (time >= 1 && time <= 365) {
+      const unit = match[2];
+      const toAdd = unit == "h" ? time * 60 ** 2 : time * 60 ** 2 * 24;
+      untilDate = Date.now() / 1000 + toAdd;
+      readableUntilDate = `${time} ${{ "h": "hour", "d": "day" }[unit]}${
+        time == 1 ? "" : "s"
+      }`;
+      readableUntilDate = readableUntilDate ? ` for ${readableUntilDate}` : "";
+    }
   }
   return { untilDate, readableUntilDate };
 }
