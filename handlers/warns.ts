@@ -59,7 +59,7 @@ filter.command(["warn", "dwarn", "swarn"], rights, async (ctx) => {
     `WARN ${warns}/${warnLimit}`,
     ctx.from,
     user,
-    `Reason: ${reason ?? "Unspecified"}`,
+    `Reason: ${reason}`,
   );
   if (warns == warnLimit) {
     await ctx.banChatMember(user);
@@ -104,7 +104,7 @@ filter.command("rmwarn", rights, async (ctx) => {
       "RMWARN",
       ctx.from,
       user,
-      `Reason: ${reason ?? "Unspecified"}`,
+      `Reason: ${reason}`,
     );
     await ctx.replyFmt(
       fmt`Removed ${mentionUser(user, user)}\u2019s last warning.`,
@@ -133,7 +133,7 @@ filter.command("resetwarn", rights, async (ctx) => {
       "RESETWARN",
       ctx.from,
       user,
-      `Reason: ${reason ?? "Unspecified"}`,
+      `Reason: ${reason}`,
     );
     await ctx.replyFmt(
       fmt`Removed ${mentionUser(user, user)}\u2019s warnings.`,

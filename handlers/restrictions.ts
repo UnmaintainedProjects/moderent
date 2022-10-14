@@ -43,7 +43,7 @@ filter.command("ban", rights, async (ctx) => {
     `BAN${params.readableUntilDate}`,
     ctx.from,
     params.user,
-    `Reason: ${params.reason ?? "Unspecified"}`,
+    `Reason: ${params.reason}`,
   );
   await ctx.replyFmt(
     fmt`Banned ${
@@ -64,7 +64,7 @@ filter.command("unban", rights, async (ctx) => {
     "UNBAN",
     ctx.from,
     params.user,
-    `Reason: ${params.reason ?? "Unspecified"}`,
+    `Reason: ${params.reason}`,
   );
   await ctx.replyFmt(fmt`Unbanned ${mentionUser(params.user, params.user)}.`);
 });
@@ -81,7 +81,7 @@ filter.command("dban", rights2, async (ctx) => {
     `BAN${params.readableUntilDate}`,
     ctx.from,
     params.user,
-    `Reason: ${params.reason ?? "Unspecified"}`,
+    `Reason: ${params.reason}`,
   );
   await ctx.deleteMessage(); // this is for sban, not dban
   if (ctx.msg.reply_to_message) {
@@ -106,7 +106,7 @@ filter.command("kick", rights, async (ctx) => {
     "KICK",
     ctx.from,
     params.user,
-    `Reason: ${params.reason ?? "Unspecified"}`,
+    `Reason: ${params.reason}`,
   );
   await ctx.replyFmt(fmt`Kicked ${mentionUser(params.user, params.user)}.`);
 });
@@ -125,7 +125,7 @@ filter.command("dkick", rights2, async (ctx) => {
     "KICK",
     ctx.from,
     params.user,
-    `Reason: ${params.reason ?? "Unspecified"}`,
+    `Reason: ${params.reason}`,
   );
   if (ctx.msg.reply_to_message) {
     await ctx.api.deleteMessage(
@@ -149,7 +149,7 @@ filter.command("mute", rights, async (ctx) => {
     `MUTE${params.readableUntilDate}`,
     ctx.from,
     params.user,
-    `Reason: ${params.reason ?? "Unspecified"}`,
+    `Reason: ${params.reason}`,
   );
   await ctx.replyFmt(
     fmt`Muted ${
@@ -179,7 +179,7 @@ filter.command("unmute", rights, async (ctx) => {
     "UNMUTE",
     ctx.from,
     params.user,
-    `Reason: ${params.reason ?? "Unspecified"}`,
+    `Reason: ${params.reason}`,
   );
   await ctx.replyFmt(`Unmuted ${mentionUser(params.user, params.user)}.`);
 });
@@ -198,7 +198,7 @@ filter.command("dmute", rights, async (ctx) => {
     `MUTE${params.readableUntilDate}`,
     ctx.from,
     params.user,
-    `Reason: ${params.reason ?? "Unspecified"}`,
+    `Reason: ${params.reason}`,
   );
   await ctx.deleteMessage();
   if (ctx.msg.reply_to_message) {
